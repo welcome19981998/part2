@@ -6,21 +6,19 @@
   <title>勝ち方を、奪え。</title>
 
   <style>
-    /* ===== 共通 ===== */
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      background: #0f1220; /* 左右余白 */
+      background: #0f1220;
       font-family: system-ui, -apple-system, BlinkMacSystemFont,
                    "Segoe UI", "Hiragino Kaku Gothic ProN",
                    Meiryo, sans-serif;
       color: #eaeaf0;
     }
 
-    /* ===== 縦長レイアウトの核 ===== */
     .app-wrapper {
       display: flex;
       justify-content: center;
@@ -28,104 +26,72 @@
 
     .app {
       width: 100%;
-      max-width: 420px;        /* 縦長幅の基準 */
+      max-width: 420px;
       min-height: 100vh;
-      background: #171a2e;
+      background: linear-gradient(180deg, #1c2150, #171a2e);
       display: flex;
       flex-direction: column;
+      align-items: center;
+      padding: 32px 20px;
     }
 
-    /* ===== セクション ===== */
-    header {
-      padding: 72px 20px 56px;
+    /* ===== タイトル ===== */
+    .title {
+      margin-top: 80px;
       text-align: center;
-      background: linear-gradient(180deg, #1c2150, #171a2e);
     }
 
-    header h1 {
-      font-size: 2.2rem;
-      letter-spacing: 0.15em;
-      margin: 0 0 16px;
+    .title h1 {
+      font-size: 2.4rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
     }
 
-    header p {
-      font-size: 1rem;
+    .title p {
+      font-size: 0.95rem;
       opacity: 0.85;
       line-height: 1.8;
     }
 
-    .cta {
-      margin-top: 32px;
-    }
-
-    .cta a {
-      display: inline-block;
-      padding: 14px 32px;
-      border-radius: 999px;
-      background: #4f6bff;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-    }
-
-    section {
-      padding: 48px 20px;
-    }
-
-    h2 {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-      border-left: 4px solid #4f6bff;
-      padding-left: 12px;
-    }
-
-    p {
-      font-size: 0.95rem;
-      line-height: 1.9;
-      opacity: 0.95;
-    }
-
-    /* ===== 色カード ===== */
-    .colors {
+    /* ===== メニュー ===== */
+    .menu {
+      width: 100%;
+      margin-top: 64px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    .color-card {
-      background: #1e2240;
-      padding: 20px;
+    .menu button {
+      width: 100%;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      background: #4f6bff;
+      border: none;
       border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.1s ease, opacity 0.1s ease;
     }
 
-    .color-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.1rem;
+    .menu button.secondary {
+      background: #2a2f55;
+      font-weight: normal;
     }
 
-    .color-card p {
-      margin: 0;
-      font-size: 0.9rem;
+    .menu button:active {
+      transform: scale(0.97);
       opacity: 0.9;
     }
 
-    /* ===== 特徴リスト ===== */
-    ul {
-      padding-left: 20px;
-    }
-
-    li {
-      margin-bottom: 10px;
-      font-size: 0.9rem;
-    }
-
+    /* ===== フッター ===== */
     footer {
       margin-top: auto;
-      padding: 32px 20px;
-      text-align: center;
-      font-size: 0.8rem;
+      padding: 24px 0 8px;
+      font-size: 0.75rem;
       opacity: 0.6;
+      text-align: center;
     }
   </style>
 </head>
@@ -135,71 +101,36 @@
 <div class="app-wrapper">
   <div class="app">
 
-    <header>
+    <div class="title">
       <h1>勝ち方を、奪え。</h1>
       <p>
         手札はすべて公開。<br>
-        運ではなく、読み合いで勝て。
+        読み合いで、勝利を奪え。
       </p>
+    </div>
 
-      <div class="cta">
-        <a href="#">▶ 今すぐプレイ（準備中）</a>
-      </div>
-    </header>
+    <div class="menu">
+      <button onclick="alert('ランクマッチ（未実装）')">
+        ▶ ランクマッチ
+      </button>
 
-    <section>
-      <h2>このゲームについて</h2>
-      <p>
-        本作は、Webブラウザで遊べる対戦カードゲームです。<br>
-        相手の手札がすべて見えている状態で、
-        色の相性と読み合いによって勝敗が決まります。
-      </p>
-    </section>
+      <button class="secondary" onclick="alert('デッキ編成（未実装）')">
+        デッキ編成
+      </button>
 
-    <section>
-      <h2>3つの色、3つの勝ち方</h2>
+      <button class="secondary" onclick="alert('カード取得（未実装）')">
+        カード取得
+      </button>
 
-      <div class="colors">
-        <div class="color-card">
-          <h3>🟥 赤 ― 速攻</h3>
-          <p>
-            低レベル・高ダメージ。<br>
-            デッキは薄いが、速さで押し切る。
-          </p>
-        </div>
-
-        <div class="color-card">
-          <h3>🟨 黄 ― 一撃逆転</h3>
-          <p>
-            レベル3以上の切り札。<br>
-            1枚通せば試合が壊れる。
-          </p>
-        </div>
-
-        <div class="color-card">
-          <h3>🟦 青 ― 枯渇</h3>
-          <p>
-            ダメージを与えない。<br>
-            デッキと未来を削り切れ。
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <h2>特徴</h2>
-      <ul>
-        <li>手札は常に公開情報</li>
-        <li>勝利条件は1つではない</li>
-        <li>CPU相手でも本格的な読み合い</li>
-        <li>1試合 約10分</li>
-      </ul>
-    </section>
+      <button class="secondary" onclick="alert('ルール説明（未実装）')">
+        遊び方
+      </button>
+    </div>
 
     <footer>
       <p>
-        制作：阪本遼太郎<br>
-        JavaScript / HTML / CSS
+        Web Browser Card Game<br>
+        © Ryotaro Sakamoto
       </p>
     </footer>
 
