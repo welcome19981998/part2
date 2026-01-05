@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>遊び方｜ルール説明</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #0f1220;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", "Hiragino Kaku Gothic ProN",
+                   Meiryo, sans-serif;
+      color: #eaeaf0;
+    }
+
+    .app-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 420px;
+      min-height: 100vh;
+      background: #171a2e;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 16px 0 32px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      border-left: 4px solid #4f6bff;
+      padding-left: 10px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      margin-bottom: 12px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    li {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 8px;
+    }
+
+    .highlight {
+      background: #1e2240;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    .colors {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .color {
+      background: #1e2240;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 24px 0 8px;
+    }
+
+    footer button {
+      background: #4f6bff;
+      border: none;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app-wrapper">
+  <div class="app">
+
+    <header>
+      <h1>遊び方</h1>
+      <p>ルールは簡単。勝ち方は1つじゃない。</p>
+    </header>
+
+    <section>
+      <h2>ゲームの目的</h2>
+      <p>
+        次の <strong>どちらかを先に達成</strong> したプレイヤーの勝ちです。
+      </p>
+
+      <div class="highlight">
+        ・相手のライフを <strong>0</strong> にする<br>
+        ・相手の <strong>デッキと手札をすべて0枚</strong> にする
+      </div>
+    </section>
+
+    <section>
+      <h2>ターンの流れ</h2>
+      <ul>
+        <li>
+          <strong>ドロー</strong><br>
+          両プレイヤーは、自分のデッキからカードを1枚引いて手札に加えます。
+        </li>
+        <li>
+          <strong>カード選択</strong><br>
+          手札から、場に出すカードを1枚選びます。
+        </li>
+        <li>
+          <strong>バトル</strong><br>
+          お互いに選んだカードを、同時に場に出してバトル！
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>カードの色と相性</h2>
+      <p>
+        カードには <strong>3つの色</strong> があります。
+      </p>
+
+      <div class="colors">
+        <div class="color">🟥 赤 → 🟨 黄色 に強い</div>
+        <div class="color">🟨 黄色 → 🟦 青 に強い</div>
+        <div class="color">🟦 青 → 🟥 赤 に強い</div>
+      </div>
+
+      <p style="margin-top:12px;">
+        ※ じゃんけんのような三すくみの関係です。
+      </p>
+    </section>
+
+    <section>
+      <h2>バトルの結果</h2>
+      <ul>
+        <li>
+          相性で <strong>有利な色</strong> のカードを出したプレイヤーが勝利
+        </li>
+        <li>
+          <strong>同じ色同士</strong> の場合は引き分けとなり、<br>
+          お互いにカードの効果は使用できません
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>カードの処理</h2>
+      <ul>
+        <li>
+          使用したカードは、<strong>勝敗に関係なく</strong> 墓地に送られます
+        </li>
+        <li>
+          バトルに <strong>勝った場合のみ</strong>、<br>
+          カードのダメージや追加効果を発動できます
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      <button onclick="location.href='index.html'">
+        タイトルへ戻る
+      </button>
+    </footer>
+
+  </div>
+</div>
+
+</body>
+</html>
