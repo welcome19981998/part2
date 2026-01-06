@@ -14,7 +14,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
+      overflow: hidden; /* スクロール完全禁止 */
     }
 
     body {
@@ -25,9 +25,11 @@
       color: #eaeaf0;
     }
 
+    /* 画面中央に縦長アプリを固定 */
     .app-wrapper {
       display: flex;
       justify-content: center;
+      align-items: center;
       height: 100%;
     }
 
@@ -38,7 +40,7 @@
       background: linear-gradient(180deg, #1c2150, #171a2e);
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* ★ 重要 */
+      justify-content: space-between;
       align-items: center;
       padding: 24px 20px 16px;
     }
@@ -46,7 +48,7 @@
     /* ===== タイトル ===== */
     .title {
       text-align: center;
-      margin-top: 4vh; /* ★ pxやめる */
+      margin-top: 4vh;
     }
 
     .title h1 {
@@ -66,7 +68,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px; /* ★ 少し詰める */
+      gap: 12px;
       margin-top: 4vh;
     }
 
@@ -94,19 +96,6 @@
       text-align: center;
       padding-top: 8px;
     }
-
-    /* ===== 縦向き固定 ===== */
-    .orientation-lock {
-      position: fixed;
-      inset: 0;
-      background: #0f1220;
-      color: #fff;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 9999;
-    }
   </style>
 </head>
 
@@ -125,10 +114,18 @@
     </div>
 
     <div class="menu">
-      <button>▶ ランクマッチ</button>
-      <button class="secondary">デッキ編成</button>
-      <button class="secondary">カード取得</button>
-      <button class="secondary" onclick="location.href='rule.html'">遊び方</button>
+      <button onclick="alert('ランクマッチ（未実装）')">
+        ▶ ランクマッチ
+      </button>
+      <button class="secondary" onclick="alert('デッキ編成（未実装）')">
+        デッキ編成
+      </button>
+      <button class="secondary" onclick="alert('カード取得（未実装）')">
+        カード取得
+      </button>
+      <button class="secondary" onclick="location.href='rule.html'">
+        遊び方
+      </button>
     </div>
 
     <footer>
@@ -138,20 +135,6 @@
 
   </div>
 </div>
-
-<div class="orientation-lock" id="orientationLock">
-  <p>このゲームは縦向き専用です。<br>端末を縦にしてください。</p>
-</div>
-
-<script>
-  function checkOrientation() {
-    const lock = document.getElementById('orientationLock');
-    lock.style.display =
-      window.innerWidth > window.innerHeight ? 'flex' : 'none';
-  }
-  window.addEventListener('load', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
-</script>
 
 </body>
 </html>
