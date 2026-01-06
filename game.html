@@ -77,7 +77,6 @@ html, body {
   justify-content: center;
   font-size: 0.7rem;
   line-height: 1.2;
-  opacity: 0.9;
 }
 
 /* ===== 手札 ===== */
@@ -86,41 +85,89 @@ html, body {
   gap: 8px;
 }
 
-/* ===== カード ===== */
-.card {
-  width: 72px;
-  height: 96px;
+/* ===== カード共通 ===== */
+.card, .card-large {
   background: #4f6bff;
   border-radius: 10px;
   position: relative;
   cursor: pointer;
 }
 
-/* レベル（左上） */
-.card .level {
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  font-size: 0.65rem;
-  font-weight: bold;
+/* 通常カード */
+.card {
+  width: 72px;
+  height: 96px;
 }
 
-/* ダメージ（右下） */
-.card .damage {
+/* 拡大カード */
+.card-large {
+  width: 260px;
+  height: 360px;
+  border-radius: 20px;
+}
+
+/* ===== レベル表示 ===== */
+.level {
   position: absolute;
-  bottom: 4px;
+  top: 6px;
+  left: 6px;
+  width: 28px;
+  height: 28px;
+  background: #111;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.level span {
+  font-size: 0.55rem;
+  line-height: 1;
+}
+
+.level strong {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+/* 拡大版レベル */
+.card-large .level {
+  width: 44px;
+  height: 44px;
+}
+
+.card-large .level span {
+  font-size: 0.7rem;
+}
+
+.card-large .level strong {
+  font-size: 1.4rem;
+}
+
+/* ===== ダメージ表示 ===== */
+.damage {
+  position: absolute;
+  bottom: 6px;
   right: 6px;
   width: 22px;
   height: 22px;
   background: #111;
   border-radius: 50%;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ===== バトル中央 ===== */
+/* 拡大版ダメージ */
+.card-large .damage {
+  width: 44px;
+  height: 44px;
+  font-size: 1.4rem;
+}
+
+/* ===== 中央 ===== */
 .battlefield {
   flex: 1;
   display: flex;
@@ -156,32 +203,6 @@ html, body {
   gap: 16px;
 }
 
-/* 拡大カード */
-.card-large {
-  width: 260px;
-  height: 360px;
-  background: #4f6bff;
-  border-radius: 20px;
-  position: relative;
-}
-
-/* 拡大版レベル */
-.card-large .level {
-  top: 12px;
-  left: 16px;
-  font-size: 1.2rem;
-}
-
-/* 拡大版ダメージ */
-.card-large .damage {
-  bottom: 12px;
-  right: 16px;
-  width: 48px;
-  height: 48px;
-  font-size: 1.2rem;
-}
-
-/* ===== ボタン ===== */
 .modal-buttons {
   width: 260px;
   display: flex;
@@ -217,13 +238,18 @@ html, body {
       </div>
 
       <div class="hand">
-        <div class="card" onclick="openEnemyCard('Lv.2', 3)">
-          <div class="level">Lv.2</div>
+        <!-- 初期手札3枚 -->
+        <div class="card" onclick="openEnemyCard(2, 3)">
+          <div class="level"><span>Lv.</span><strong>2</strong></div>
           <div class="damage">3</div>
         </div>
-        <div class="card" onclick="openEnemyCard('Lv.0', 0)">
-          <div class="level">Lv.0</div>
+        <div class="card" onclick="openEnemyCard(0, 0)">
+          <div class="level"><span>Lv.</span><strong>0</strong></div>
           <div class="damage">0</div>
+        </div>
+        <div class="card" onclick="openEnemyCard(-1, '?')">
+          <div class="level"><span>Lv.</span><strong>-1</strong></div>
+          <div class="damage">?</div>
         </div>
       </div>
     </div>
@@ -233,12 +259,17 @@ html, body {
     <!-- 自分 -->
     <div class="player-area self-area">
       <div class="hand">
-        <div class="card" onclick="openPlayerCard('Lv.3', 5, true)">
-          <div class="level">Lv.3</div>
+        <!-- 初期手札3枚 -->
+        <div class="card" onclick="openPlayerCard(3, 5, true)">
+          <div class="level"><span>Lv.</span><strong>3</strong></div>
           <div class="damage">5</div>
         </div>
-        <div class="card" onclick="openPlayerCard('Lv.-1', '?', false)">
-          <div class="level">Lv.-1</div>
+        <div class="card" onclick="openPlayerCard(1, 2, false)">
+          <div class="level"><span>Lv.</span><strong>1</strong></div>
+          <div class="damage">2</div>
+        </div>
+        <div class="card" onclick="openPlayerCard(-2, '?', false)">
+          <div class="level"><span>Lv.</span><strong>-2</strong></div>
           <div class="damage">?</div>
         </div>
       </div>
@@ -288,7 +319,7 @@ const modalButtons = document.getElementById("modalButtons");
 
 function openCard(level, damage, actions) {
   modalCard.innerHTML = `
-    <div class="level">${level}</div>
+    <div class="level"><span>Lv.</span><strong>${level}</strong></div>
     <div class="damage">${damage}</div>
   `;
   modalButtons.innerHTML = "";
@@ -304,14 +335,10 @@ function openCard(level, damage, actions) {
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "閉じる";
   closeBtn.className = "secondary";
-  closeBtn.onclick = closeModal;
+  closeBtn.onclick = () => cardModal.style.display = "none";
   modalButtons.appendChild(closeBtn);
 
   cardModal.style.display = "flex";
-}
-
-function closeModal() {
-  cardModal.style.display = "none";
 }
 
 /* ===== 自分カード ===== */
