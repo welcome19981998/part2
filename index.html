@@ -14,7 +14,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* スクロール完全防止 */
+      overflow: hidden;
     }
 
     body {
@@ -38,48 +38,48 @@
       background: linear-gradient(180deg, #1c2150, #171a2e);
       display: flex;
       flex-direction: column;
+      justify-content: space-between; /* ★ 重要 */
       align-items: center;
-      padding: 32px 20px;
+      padding: 24px 20px 16px;
     }
 
     /* ===== タイトル ===== */
     .title {
-      margin-top: 80px;
       text-align: center;
+      margin-top: 4vh; /* ★ pxやめる */
     }
 
     .title h1 {
-      font-size: 2.4rem;
-      letter-spacing: 0.2em;
-      margin-bottom: 16px;
+      font-size: 2.2rem;
+      letter-spacing: 0.18em;
+      margin: 8px 0 12px;
     }
 
     .title p {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       opacity: 0.85;
-      line-height: 1.8;
+      line-height: 1.7;
     }
 
     /* ===== メニュー ===== */
     .menu {
       width: 100%;
-      margin-top: 64px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px; /* ★ 少し詰める */
+      margin-top: 4vh;
     }
 
     .menu button {
       width: 100%;
-      padding: 16px;
-      font-size: 1rem;
+      padding: 14px;
+      font-size: 0.95rem;
       font-weight: bold;
       color: #fff;
       background: #4f6bff;
       border: none;
       border-radius: 14px;
       cursor: pointer;
-      transition: transform 0.1s ease, opacity 0.1s ease;
     }
 
     .menu button.secondary {
@@ -87,21 +87,15 @@
       font-weight: normal;
     }
 
-    .menu button:active {
-      transform: scale(0.97);
-      opacity: 0.9;
-    }
-
     /* ===== フッター ===== */
     footer {
-      margin-top: auto;
-      padding: 24px 0 8px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       opacity: 0.6;
       text-align: center;
+      padding-top: 8px;
     }
 
-    /* ===== 縦向き固定（横向きブロック） ===== */
+    /* ===== 縦向き固定 ===== */
     .orientation-lock {
       position: fixed;
       inset: 0;
@@ -112,12 +106,6 @@
       align-items: center;
       text-align: center;
       z-index: 9999;
-    }
-
-    .orientation-lock p {
-      font-size: 1rem;
-      line-height: 1.8;
-      opacity: 0.9;
     }
   </style>
 </head>
@@ -137,48 +125,30 @@
     </div>
 
     <div class="menu">
-      <button onclick="alert('ランクマッチ（未実装）')">
-        ▶ ランクマッチ
-      </button>
-
-      <button class="secondary" onclick="alert('デッキ編成（未実装）')">
-        デッキ編成
-      </button>
-
-      <button class="secondary" onclick="alert('カード取得（未実装）')">
-        カード取得
-      </button>
-
-      <button class="secondary" onclick="location.href='rule.html'">
-        遊び方
-      </button>
+      <button>▶ ランクマッチ</button>
+      <button class="secondary">デッキ編成</button>
+      <button class="secondary">カード取得</button>
+      <button class="secondary" onclick="location.href='rule.html'">遊び方</button>
     </div>
 
     <footer>
-      <p>
-        Web Browser Card Game<br>
-        © Ryotaro Sakamoto
-      </p>
+      Web Browser Card Game<br>
+      © Ryotaro Sakamoto
     </footer>
 
   </div>
 </div>
 
-<!-- 横向き時に表示されるオーバーレイ -->
 <div class="orientation-lock" id="orientationLock">
-  <p>
-    このゲームは縦向き専用です。<br>
-    端末を縦にしてください。
-  </p>
+  <p>このゲームは縦向き専用です。<br>端末を縦にしてください。</p>
 </div>
 
 <script>
   function checkOrientation() {
     const lock = document.getElementById('orientationLock');
-    const isLandscape = window.innerWidth > window.innerHeight;
-    lock.style.display = isLandscape ? 'flex' : 'none';
+    lock.style.display =
+      window.innerWidth > window.innerHeight ? 'flex' : 'none';
   }
-
   window.addEventListener('load', checkOrientation);
   window.addEventListener('resize', checkOrientation);
 </script>
