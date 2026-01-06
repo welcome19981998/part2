@@ -37,7 +37,7 @@ html, body {
   transform-origin: center;
 }
 
-/* ===== 上下共通 ===== */
+/* ===== プレイヤー共通 ===== */
 .player-area {
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@ html, body {
   gap: 8px;
 }
 
-/* 相手側を上下反転（見た目だけ） */
+/* 相手側は上下反転（見た目だけ） */
 .enemy {
   transform: rotate(180deg);
 }
@@ -101,6 +101,64 @@ html, body {
   font-size: 0.9rem;
   opacity: 0.7;
 }
+
+/* ===== カード拡大モーダル ===== */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.card-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 拡大カード */
+.card-large {
+  width: 200px;
+  height: 280px;
+  background: #4f6bff;
+  border-radius: 16px;
+  font-size: 3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ボタンエリア（最大4ボタン対応） */
+.modal-buttons {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-buttons button {
+  padding: 12px;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-buttons button.primary {
+  background: #4f6bff;
+  color: #fff;
+}
+
+.modal-buttons button.secondary {
+  background: #2a2f55;
+  color: #fff;
+}
 </style>
 </head>
 
@@ -109,7 +167,7 @@ html, body {
 <div class="app-wrapper">
   <div class="app" id="app">
 
-    <!-- 相手 -->
+    <!-- 相手プレイヤー -->
     <div class="player-area enemy">
       <div class="zone-row">
         <div class="zone">墓地</div>
@@ -125,15 +183,15 @@ html, body {
 
     <!-- バトル場 -->
     <div class="battlefield">
-      バトル！
+      カードを選択
     </div>
 
-    <!-- 自分 -->
+    <!-- 自分プレイヤー -->
     <div class="player-area">
       <div class="hand">
-        <div class="card" onclick="playCard(0)">🟥</div>
-        <div class="card" onclick="playCard(1)">🟨</div>
-        <div class="card" onclick="playCard(2)">🟦</div>
+        <div class="card" onclick="onCardClick('🟥')">🟥</div>
+        <div class="card" onclick="onCardClick('🟨')">🟨</div>
+        <div class="card" onclick="onCardClick('🟦')">🟦</div>
       </div>
 
       <div class="zone-row">
@@ -145,7 +203,16 @@ html, body {
   </div>
 </div>
 
+<!-- ===== カード拡大モーダル ===== -->
+<div class="card-modal" id="cardModal">
+  <div class="card-modal-content">
+    <div class="card-large" id="modalCard"></div>
+    <div class="modal-buttons" id="modalButtons"></div>
+  </div>
+</div>
+
 <script>
+/* ===== 縦キャンバス縮放 ===== */
 function fitApp() {
   const app = document.getElementById("app");
   const scale = Math.min(
@@ -157,8 +224,51 @@ function fitApp() {
 window.addEventListener("load", fitApp);
 window.addEventListener("resize", fitApp);
 
-function playCard(index) {
-  alert(`カード${index + 1}を選択`);
+/* ===== モーダル制御 ===== */
+const cardModal = document.getElementById("cardModal");
+const modalCard = document.getElementById("modalCard");
+const modalButtons = document.getElementById("modalButtons");
+
+function openCardModal(cardLabel, actions) {
+  modalCard.textContent = cardLabel;
+  modalButtons.innerHTML = "";
+
+  actions.slice(0, 4).forEach(action => {
+    const btn = document.createElement("button");
+    btn.textContent = action.label;
+    btn.className = action.type || "secondary";
+    btn.onclick = action.onClick;
+    modalButtons.appendChild(btn);
+  });
+
+  cardModal.style.display = "flex";
+}
+
+function closeCardModal() {
+  cardModal.style.display = "none";
+}
+
+cardModal.addEventListener("click", (e) => {
+  if (e.target === cardModal) closeCardModal();
+});
+
+/* ===== カードクリック ===== */
+function onCardClick(card) {
+  openCardModal(card, [
+    {
+      label: "場に出す",
+      type: "primary",
+      onClick: () => {
+        alert(card + " を場に出しました");
+        closeCardModal();
+      }
+    },
+    {
+      label: "閉じる",
+      type: "secondary",
+      onClick: closeCardModal
+    }
+  ]);
 }
 </script>
 
