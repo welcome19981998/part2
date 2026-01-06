@@ -107,7 +107,7 @@ html, body {
   transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
-/* ===== レベル & ダメージ（共通サイズ） ===== */
+/* ===== レベル & ダメージ ===== */
 .level, .damage {
   position: absolute;
   width: 22px;
@@ -127,12 +127,10 @@ html, body {
 
 .level span {
   font-size: 0.45rem;
-  line-height: 1;
 }
 
 .level strong {
   font-size: 0.75rem;
-  line-height: 1;
 }
 
 .damage {
@@ -167,7 +165,6 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  transform-origin: center;
 }
 
 .card-modal-content {
@@ -189,7 +186,6 @@ html, body {
   border-radius: 14px;
   border: none;
   font-size: 0.95rem;
-  cursor: pointer;
 }
 
 .primary { background: #4f6bff; color: #fff; }
@@ -206,37 +202,35 @@ html, body {
   z-index: 8000;
 }
 
-.win {
-  transform: scale(1.3);
-  z-index: 2;
-}
-
-.lose {
-  transform: scale(0.85);
-  opacity: 0.4;
-}
-
-.draw {
-  animation: shake 0.4s ease-in-out 2;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
-}
+.win { transform: scale(1.3); }
+.lose { transform: scale(0.85); opacity: 0.4; }
 
 .result-text {
   position: absolute;
-  bottom: 100px;
+  bottom: 120px;
   font-size: 1.4rem;
   font-weight: bold;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s;
 }
 .result-text.show { opacity: 1; }
+
+/* ===== 飛ぶダメージ ===== */
+.flying-damage {
+  position: fixed;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  animation: fly 0.8s ease forwards;
+  z-index: 8500;
+}
+
+@keyframes fly {
+  to {
+    transform: translateY(-80px);
+    opacity: 0;
+  }
+}
 </style>
 </head>
 
@@ -245,68 +239,39 @@ html, body {
 <div class="app-wrapper">
   <div class="app" id="app">
 
-    <!-- 相手 -->
     <div class="player-area enemy-area">
       <div class="zone-column">
-        <div class="life">ライフ:10</div>
+        <div class="life" id="enemyLife">ライフ:10</div>
         <div class="zone">墓地</div>
-        <div class="zone">デッキ<br>15</div>
+        <div class="zone" id="enemyDeck">デッキ<br>15</div>
       </div>
       <div class="hand">
         <div class="card" onclick="openEnemyCard(2,3)">
           <div class="level"><span>Lv.</span><strong>2</strong></div>
           <div class="damage">3</div>
         </div>
-        <div class="card" onclick="openEnemyCard(0,0)">
-          <div class="level"><span>Lv.</span><strong>0</strong></div>
-          <div class="damage">0</div>
-        </div>
-        <div class="card" onclick="openEnemyCard(-1,'?')">
-          <div class="level"><span>Lv.</span><strong>-1</strong></div>
-          <div class="damage">?</div>
-        </div>
       </div>
     </div>
 
     <div class="battlefield">カードを選択</div>
 
-    <!-- 自分 -->
     <div class="player-area self-area">
       <div class="hand">
-        <div class="card" onclick="openPlayerCard({level:3,damage:5,color:'red'}, true)">
+        <div class="card" onclick="openPlayerCard({level:3,damage:5,color:'red'}, false)">
           <div class="level"><span>Lv.</span><strong>3</strong></div>
           <div class="damage">5</div>
         </div>
-        <div class="card" onclick="openPlayerCard({level:1,damage:2,color:'blue'}, false)">
-          <div class="level"><span>Lv.</span><strong>1</strong></div>
-          <div class="damage">2</div>
-        </div>
-        <div class="card" onclick="openPlayerCard({level:-2,damage:'?',color:'yellow'}, false)">
-          <div class="level"><span>Lv.</span><strong>-2</strong></div>
-          <div class="damage">?</div>
-        </div>
       </div>
       <div class="zone-column">
-        <div class="life">ライフ:10</div>
+        <div class="life" id="playerLife">ライフ:10</div>
         <div class="zone">墓地</div>
-        <div class="zone">デッキ<br>15</div>
+        <div class="zone" id="playerDeck">デッキ<br>15</div>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ===== モーダル ===== -->
-<div class="card-modal" id="cardModal">
-  <div class="modal-canvas" id="modalCanvas">
-    <div class="card-modal-content">
-      <div class="card-large" id="modalCard"></div>
-      <div class="modal-buttons" id="modalButtons"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== バトル演出 ===== -->
 <div class="battle-cards" id="battleLayer">
   <div class="battle-card" id="playerBattle"></div>
   <div class="battle-card" id="enemyBattle"></div>
@@ -314,72 +279,19 @@ html, body {
 </div>
 
 <script>
-/* ===== スケール ===== */
-function fit(el,w,h){
-  const s=Math.min(innerWidth/w,innerHeight/h);
-  el.style.transform=`scale(${s})`;
-}
-const app=document.getElementById("app");
-const modalCanvas=document.getElementById("modalCanvas");
-addEventListener("resize",()=>{fit(app,360,640);fit(modalCanvas,360,640);});
-fit(app,360,640);fit(modalCanvas,360,640);
+let playerLife = 10;
+let enemyLife = 10;
+let playerDeck = 15;
+let enemyDeck = 15;
+let selectedCard = null;
 
-/* ===== モーダル ===== */
-const cardModal=document.getElementById("cardModal");
-const modalCard=document.getElementById("modalCard");
-const modalButtons=document.getElementById("modalButtons");
-let selectedCard=null;
-
-function openPlayerCard(card, hasChoice){
-  selectedCard=card;
-  modalCard.innerHTML=createCardHTML(card);
-  modalButtons.innerHTML="";
-
-  if(hasChoice){
-    ["red","blue"].forEach(c=>{
-      addBtn(c+"として出す",()=>{card.color=c;closeAndBattle();});
-    });
-  }else{
-    addBtn("場に出す",closeAndBattle);
-  }
-  addClose();
-  cardModal.style.display="flex";
-}
-
-function openEnemyCard(l,d){
-  modalCard.innerHTML=createCardHTML({level:l,damage:d});
-  modalButtons.innerHTML="";
-  addClose();
-  cardModal.style.display="flex";
-}
-
-function addBtn(text,fn){
-  const b=document.createElement("button");
-  b.textContent=text;
-  b.className="primary";
-  b.onclick=fn;
-  modalButtons.appendChild(b);
-}
-function addClose(){
-  const b=document.createElement("button");
-  b.textContent="閉じる";
-  b.className="secondary";
-  b.onclick=()=>cardModal.style.display="none";
-  modalButtons.appendChild(b);
-}
-
-function createCardHTML(c){
-  return `<div class="level"><span>Lv.</span><strong>${c.level}</strong></div>
-          <div class="damage">${c.damage}</div>`;
+/* ===== モーダル簡略 ===== */
+function openPlayerCard(card){
+  selectedCard = card;
+  startBattle(card,{level:2,damage:3,color:"blue"});
 }
 
 /* ===== バトル ===== */
-function closeAndBattle(){
-  cardModal.style.display="none";
-  const enemy={level:2,damage:3,color:"blue"};
-  startBattle(selectedCard,enemy);
-}
-
 function judge(p,e){
   if(p===e) return "draw";
   if((p==="red"&&e==="yellow")||(p==="yellow"&&e==="blue")||(p==="blue"&&e==="red")) return "win";
@@ -387,27 +299,63 @@ function judge(p,e){
 }
 
 function startBattle(pCard,eCard){
-  const layer=document.getElementById("battleLayer");
-  const p=document.getElementById("playerBattle");
-  const e=document.getElementById("enemyBattle");
-  const r=document.getElementById("battleResult");
+  const layer = document.getElementById("battleLayer");
+  const p = document.getElementById("playerBattle");
+  const e = document.getElementById("enemyBattle");
+  const r = document.getElementById("battleResult");
 
   layer.style.display="flex";
-  p.className="battle-card";
-  e.className="battle-card";
-  r.className="result-text";
-
-  p.innerHTML=createCardHTML(pCard);
-  e.innerHTML=createCardHTML(eCard);
+  p.innerHTML = createCardHTML(pCard);
+  e.innerHTML = createCardHTML(eCard);
 
   setTimeout(()=>{
-    const res=judge(pCard.color,eCard.color);
-    if(res==="win"){p.classList.add("win");e.classList.add("lose");r.textContent="YOU WIN";}
-    else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
-    else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
+    const res = judge(pCard.color,eCard.color);
+    r.textContent = res==="win"?"YOU WIN":res==="lose"?"YOU LOSE":"DRAW";
     r.classList.add("show");
-    setTimeout(()=>layer.style.display="none",2000);
-  },500);
+
+    if(res==="win"){
+      damage(enemyLifeEl(), pCard.damage);
+      enemyLife -= pCard.damage;
+      updateLife();
+    }
+
+    setTimeout(()=>{
+      layer.style.display="none";
+      drawPhase();
+    },1200);
+
+  },600);
+}
+
+/* ===== ダメージ演出 ===== */
+function damage(targetEl, amount){
+  const d = document.createElement("div");
+  d.className="flying-damage";
+  d.textContent=`-${amount}`;
+  const rect = targetEl.getBoundingClientRect();
+  d.style.left = rect.left+"px";
+  d.style.top = rect.top+"px";
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),800);
+}
+
+/* ===== ドロー ===== */
+function drawPhase(){
+  playerDeck--; enemyDeck--;
+  document.getElementById("playerDeck").innerHTML=`デッキ<br>${playerDeck}`;
+  document.getElementById("enemyDeck").innerHTML=`デッキ<br>${enemyDeck}`;
+}
+
+function updateLife(){
+  document.getElementById("playerLife").textContent=`ライフ:${playerLife}`;
+  document.getElementById("enemyLife").textContent=`ライフ:${enemyLife}`;
+}
+
+function enemyLifeEl(){ return document.getElementById("enemyLife"); }
+
+function createCardHTML(c){
+  return `<div class="level"><span>Lv.</span><strong>${c.level}</strong></div>
+          <div class="damage">${c.damage}</div>`;
 }
 </script>
 
