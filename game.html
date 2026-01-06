@@ -18,7 +18,7 @@ html, body {
   color: #eaeaf0;
 }
 
-/* ===== 縦キャンバス共通 ===== */
+/* ===== 縦キャンバス ===== */
 .app-wrapper {
   position: fixed;
   inset: 0;
@@ -31,59 +31,19 @@ html, body {
   width: 360px;
   height: 640px;
   background: linear-gradient(180deg, #1c2150, #171a2e);
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  justify-content: space-between;
   transform-origin: center;
 }
 
-/* ===== 上下プレイヤー ===== */
-.player-area {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* 相手は右寄せ */
-.enemy {
-  align-items: flex-end;
-}
-
-/* 自分は左寄せ */
-.self {
-  align-items: flex-start;
-}
-
-/* ===== デッキ・墓地（縦配置） ===== */
-.zone-column {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.zone {
-  width: 48px;
-  height: 64px;
-  border-radius: 8px;
-  background: #2a2f55;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  opacity: 0.8;
-}
-
-/* ===== 手札 ===== */
-.hand {
-  display: flex;
-  gap: 8px;
-}
-
+/* ===== 共通カードサイズ ===== */
 .card {
   width: 72px;
   height: 96px;
-  background: #4f6bff;
   border-radius: 10px;
+  background: #4f6bff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,16 +51,60 @@ html, body {
   cursor: pointer;
 }
 
-/* ===== バトル場 ===== */
+/* ===== デッキ・墓地 ===== */
+.zone-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zone {
+  width: 72px;
+  height: 96px;
+  border-radius: 10px;
+  background: #2a2f55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+/* ===== 相手エリア（左上） ===== */
+.enemy-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.enemy-hand {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== バトル中央 ===== */
 .battlefield {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
-/* ===== モーダル（縦キャンバス方式） ===== */
+/* ===== 自分エリア（下） ===== */
+.self-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* 手札は左、デッキは右 */
+.self-hand {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== モーダル ===== */
 .card-modal {
   position: fixed;
   inset: 0;
@@ -127,12 +131,11 @@ html, body {
   gap: 16px;
 }
 
-/* 拡大カード（最大化） */
 .card-large {
   width: 260px;
   height: 360px;
-  background: #4f6bff;
   border-radius: 20px;
+  background: #4f6bff;
   font-size: 3.5rem;
   font-weight: bold;
   display: flex;
@@ -140,7 +143,6 @@ html, body {
   justify-content: center;
 }
 
-/* ボタン */
 .modal-buttons {
   width: 260px;
   display: flex;
@@ -167,14 +169,14 @@ html, body {
 <div class="app-wrapper">
   <div class="app" id="app">
 
-    <!-- 相手（右上） -->
-    <div class="player-area enemy">
+    <!-- 相手（左上） -->
+    <div class="enemy-area">
       <div class="zone-column">
         <div class="zone">デッキ</div>
         <div class="zone">墓地</div>
       </div>
 
-      <div class="hand">
+      <div class="enemy-hand">
         <div class="card" onclick="openEnemyCard('🟥')">🟥</div>
         <div class="card" onclick="openEnemyCard('🟨')">🟨</div>
         <div class="card" onclick="openEnemyCard('🟦')">🟦</div>
@@ -185,24 +187,28 @@ html, body {
       カード選択
     </div>
 
-    <!-- 自分（左下） -->
-    <div class="player-area self">
-      <div class="hand">
-        <div class="card" onclick="openPlayerCard('🟥')">🟥</div>
-        <div class="card" onclick="openPlayerCard('🟨')">🟨</div>
-        <div class="card" onclick="openPlayerCard('🟦')">🟦</div>
+    <!-- 自分（下） -->
+    <div class="self-area">
+      <div class="self-hand">
+        <!-- このカードは色選択あり -->
+        <div class="card" onclick="openPlayerCardMulti('🟥')">🟥</div>
+
+        <!-- このカードは「場に出す」だけ -->
+        <div class="card" onclick="openPlayerCardSimple('🟨')">🟨</div>
+
+        <div class="card" onclick="openPlayerCardMulti('🟦')">🟦</div>
       </div>
 
       <div class="zone-column">
-        <div class="zone">デッキ</div>
         <div class="zone">墓地</div>
+        <div class="zone">デッキ</div>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ===== カード拡大モーダル ===== -->
+<!-- モーダル -->
 <div class="card-modal" id="cardModal">
   <div class="modal-canvas" id="modalCanvas">
     <div class="card-modal-content">
@@ -213,7 +219,7 @@ html, body {
 </div>
 
 <script>
-/* ===== scale共通 ===== */
+/* ===== scale ===== */
 function fit(target, w, h) {
   const scale = Math.min(
     window.innerWidth / w,
@@ -232,7 +238,7 @@ function resizeAll() {
 window.addEventListener("load", resizeAll);
 window.addEventListener("resize", resizeAll);
 
-/* ===== モーダル制御 ===== */
+/* ===== モーダル ===== */
 const cardModal = document.getElementById("cardModal");
 const modalCard = document.getElementById("modalCard");
 const modalButtons = document.getElementById("modalButtons");
@@ -249,7 +255,6 @@ function openCardModal(card, actions) {
     modalButtons.appendChild(btn);
   });
 
-  // 共通「閉じる」
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "閉じる";
   closeBtn.className = "secondary";
@@ -267,19 +272,18 @@ cardModal.addEventListener("click", e => {
   if (e.target === cardModal) closeCardModal();
 });
 
-/* ===== 自分カード ===== */
-function openPlayerCard(card) {
+/* ===== 自分カード：色選択あり ===== */
+function openPlayerCardMulti(card) {
   openCardModal(card, [
-    {
-      label: "赤として場に出す",
-      type: "primary",
-      onClick: () => alert(card + " を赤で出す")
-    },
-    {
-      label: "青として場に出す",
-      type: "primary",
-      onClick: () => alert(card + " を青で出す")
-    }
+    { label: "赤として場に出す", type: "primary", onClick: () => alert("赤") },
+    { label: "青として場に出す", type: "primary", onClick: () => alert("青") }
+  ]);
+}
+
+/* ===== 自分カード：シンプル ===== */
+function openPlayerCardSimple(card) {
+  openCardModal(card, [
+    { label: "場に出す", type: "primary", onClick: () => alert("出した") }
   ]);
 }
 
