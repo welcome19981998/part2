@@ -106,13 +106,13 @@ html, body {
   border-radius: 20px;
 }
 
-/* ===== レベル表示 ===== */
+/* ===== レベル（左上） ===== */
 .level {
   position: absolute;
   top: 6px;
   left: 6px;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   background: #111;
   border-radius: 50%;
   display: flex;
@@ -122,30 +122,16 @@ html, body {
 }
 
 .level span {
-  font-size: 0.55rem;
+  font-size: 0.45rem;
   line-height: 1;
 }
 
 .level strong {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   line-height: 1;
 }
 
-/* 拡大版レベル */
-.card-large .level {
-  width: 44px;
-  height: 44px;
-}
-
-.card-large .level span {
-  font-size: 0.7rem;
-}
-
-.card-large .level strong {
-  font-size: 1.4rem;
-}
-
-/* ===== ダメージ表示 ===== */
+/* ===== ダメージ（右下） ===== */
 .damage {
   position: absolute;
   bottom: 6px;
@@ -158,13 +144,6 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* 拡大版ダメージ */
-.card-large .damage {
-  width: 44px;
-  height: 44px;
-  font-size: 1.4rem;
 }
 
 /* ===== 中央 ===== */
@@ -229,7 +208,7 @@ html, body {
 <div class="app-wrapper">
   <div class="app" id="app">
 
-    <!-- 相手 -->
+    <!-- 相手（左上） -->
     <div class="player-area enemy-area">
       <div class="zone-column">
         <div class="life">ライフ: 10</div>
@@ -256,7 +235,7 @@ html, body {
 
     <div class="battlefield">カード選択</div>
 
-    <!-- 自分 -->
+    <!-- 自分（右下） -->
     <div class="player-area self-area">
       <div class="hand">
         <!-- 初期手札3枚 -->
@@ -284,7 +263,7 @@ html, body {
   </div>
 </div>
 
-<!-- ===== モーダル ===== -->
+<!-- ===== カード拡大モーダル ===== -->
 <div class="card-modal" id="cardModal">
   <div class="modal-canvas" id="modalCanvas">
     <div class="card-modal-content">
@@ -303,12 +282,15 @@ function fit(target, w, h) {
   );
   target.style.transform = `scale(${scale})`;
 }
+
 const app = document.getElementById("app");
 const modalCanvas = document.getElementById("modalCanvas");
+
 function resizeAll() {
   fit(app, 360, 640);
   fit(modalCanvas, 360, 640);
 }
+
 window.addEventListener("load", resizeAll);
 window.addEventListener("resize", resizeAll);
 
