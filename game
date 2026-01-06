@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Battle | 三色闘戯</title>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f1220;
+  font-family: system-ui, sans-serif;
+  color: #eaeaf0;
+}
+
+/* ===== 縦キャンバス ===== */
+.app-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app {
+  width: 360px;
+  height: 640px;
+  background: linear-gradient(180deg, #1c2150, #171a2e);
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  transform-origin: center;
+}
+
+/* ===== 上下共通 ===== */
+.player-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 相手側を上下反転（見た目だけ） */
+.enemy {
+  transform: rotate(180deg);
+}
+
+/* ===== デッキ・墓地 ===== */
+.zone-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.zone {
+  width: 48px;
+  height: 64px;
+  border-radius: 8px;
+  background: #2a2f55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* ===== 手札 ===== */
+.hand {
+  display: flex;
+  gap: 8px;
+}
+
+.card {
+  width: 72px;
+  height: 96px;
+  background: #4f6bff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.card:active {
+  transform: scale(0.95);
+}
+
+/* ===== バトル場 ===== */
+.battlefield {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-wrapper">
+  <div class="app" id="app">
+
+    <!-- 相手 -->
+    <div class="player-area enemy">
+      <div class="zone-row">
+        <div class="zone">墓地</div>
+        <div class="zone">デッキ</div>
+      </div>
+
+      <div class="hand">
+        <div class="card">？</div>
+        <div class="card">？</div>
+        <div class="card">？</div>
+      </div>
+    </div>
+
+    <!-- バトル場 -->
+    <div class="battlefield">
+      バトル！
+    </div>
+
+    <!-- 自分 -->
+    <div class="player-area">
+      <div class="hand">
+        <div class="card" onclick="playCard(0)">🟥</div>
+        <div class="card" onclick="playCard(1)">🟨</div>
+        <div class="card" onclick="playCard(2)">🟦</div>
+      </div>
+
+      <div class="zone-row">
+        <div class="zone">デッキ</div>
+        <div class="zone">墓地</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function fitApp() {
+  const app = document.getElementById("app");
+  const scale = Math.min(
+    window.innerWidth / 360,
+    window.innerHeight / 640
+  );
+  app.style.transform = `scale(${scale})`;
+}
+window.addEventListener("load", fitApp);
+window.addEventListener("resize", fitApp);
+
+function playCard(index) {
+  alert(`カード${index + 1}を選択`);
+}
+</script>
+
+</body>
+</html>
