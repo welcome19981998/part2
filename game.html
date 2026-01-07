@@ -73,7 +73,7 @@ html, body {
   justify-content: center;
 }
 
-/* ===== 手札（飛び出し防止） ===== */
+/* ===== 手札 ===== */
 .hand {
   display: flex;
   justify-content: center;
@@ -117,6 +117,24 @@ html, body {
   align-items: center;
   opacity: 0.6;
 }
+
+/* ===== アニメーション ===== */
+.animation-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5000;
+}
+
+.fly-card {
+  position: fixed;
+  width: 72px;
+  height: 96px;
+  background: #4f6bff;
+  border-radius: 8px;
+  transition: transform 0.6s ease;
+  z-index: 5001;
+}
 </style>
 </head>
 
@@ -128,11 +146,11 @@ html, body {
     <!-- 相手 -->
     <div class="player enemy">
       <div class="zone-column">
-        <div class="life" id="enemyLife">ライフ:10</div>
-        <div class="zone">墓地</div>
+        <div class="life">ライフ:10</div>
+        <div class="zone" id="enemyGrave">墓地</div>
         <div class="zone">デッキ15</div>
       </div>
-      <div class="hand" id="enemyHand"></div>
+      <div class="hand"></div>
     </div>
 
     <div class="center">カードを選択</div>
@@ -141,8 +159,8 @@ html, body {
     <div class="player self">
       <div class="hand" id="playerHand"></div>
       <div class="zone-column">
-        <div class="life" id="playerLife">ライフ:10</div>
-        <div class="zone">墓地</div>
+        <div class="life">ライフ:10</div>
+        <div class="zone" id="playerGrave">墓地</div>
         <div class="zone">デッキ15</div>
       </div>
     </div>
@@ -150,9 +168,12 @@ html, body {
   </div>
 </div>
 
+<div class="animation-layer" id="animLayer"></div>
+
 <script>
 const playerHand = document.getElementById("playerHand");
-const enemyHand = document.getElementById("enemyHand");
+const playerGrave = document.getElementById("playerGrave");
+const animLayer = document.getElementById("animLayer");
 
 const cards = [
   { level: 3, damage: 5 },
@@ -171,15 +192,29 @@ cards.forEach(c => {
   const el = document.createElement("div");
   el.className = "card";
   el.innerHTML = cardHTML(c);
+  el.onclick = () => sendToGrave(el);
   playerHand.appendChild(el);
 });
 
-cards.forEach(c => {
-  const el = document.createElement("div");
-  el.className = "card";
-  el.innerHTML = cardHTML(c);
-  enemyHand.appendChild(el);
-});
+function sendToGrave(cardEl) {
+  const start = cardEl.getBoundingClientRect();
+  const end = playerGrave.getBoundingClientRect();
+
+  const fly = document.createElement("div");
+  fly.className = "fly-card";
+  fly.innerHTML = cardEl.innerHTML;
+  fly.style.left = start.left + "px";
+  fly.style.top = start.top + "px";
+
+  animLayer.appendChild(fly);
+
+  requestAnimationFrame(() => {
+    fly.style.transform =
+      `translate(${end.left - start.left}px, ${end.top - start.top}px) scale(0.6)`;
+  });
+
+  setTimeout(() => fly.remove(), 700);
+}
 </script>
 
 </body>
