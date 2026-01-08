@@ -237,6 +237,27 @@ html, body {
   transition: opacity 0.4s ease;
 }
 .result-text.show { opacity: 1; }
+
+  /* ===== カード色 ===== */
+.card.color-red,
+.card-large.color-red,
+.battle-card.color-red {
+  background: linear-gradient(180deg, #ff5a5a, #b83232);
+}
+
+.card.color-blue,
+.card-large.color-blue,
+.battle-card.color-blue {
+  background: linear-gradient(180deg, #4f6bff, #2f3fb8);
+}
+
+.card.color-yellow,
+.card-large.color-yellow,
+.battle-card.color-yellow {
+  background: linear-gradient(180deg, #ffd84f, #b89a2f);
+  color: #222;
+}
+
 </style>
 </head>
 
@@ -334,7 +355,7 @@ html, body {
 
 function createCardElement(card, isPlayer) {
   const div = document.createElement("div");
-  div.className = "card";
+  div.className = `card color-${card.color}`;
 
   div.innerHTML = `
     <div class="level">
@@ -386,6 +407,7 @@ let selectedCard=null;
 
 function openPlayerCard(card, hasChoice){
   selectedCard=card;
+  modalCard.className = `card-large color-${card.color}`;
   modalCard.innerHTML=createCardHTML(card);
   modalButtons.innerHTML="";
 
@@ -447,8 +469,8 @@ function startBattle(pCard,eCard){
   const r=document.getElementById("battleResult");
 
   layer.style.display="flex";
-  p.className="battle-card";
-  e.className="battle-card";
+  p.className = `battle-card color-${pCard.color}`;
+  e.className = `battle-card color-${eCard.color}`;
   r.className="result-text";
 
   p.innerHTML=createCardHTML(pCard);
