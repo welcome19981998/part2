@@ -336,57 +336,175 @@ html, body {
 </div>
 
 <script>
-/* ===== 初期手札を作る ===== */
-  const CARD_POOL = [
-  { level: -2, damage: "?", color: "yellow" },
-  { level: -1, damage: 1, color: "yellow" },
-  { level: 0, damage: 0, color: "blue" },
-  { level: 1, damage: 2, color: "blue" },
-  { level: 2, damage: 3, color: "red" },
-  { level: 3, damage: 5, color: "red" },
-];
-/* ===== 初期手札を作る　ランダムにカードプールから引き出す ===== */
+/* ===== 初期手札のデータ ===== */
 
-  function randomCard() {
-  const base = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
-  return { ...base }; // 重要：コピーする
+  const player = {
+  hand: [],
+  deck: [
+    {
+      name: "サーベル",
+      color: "red",
+      level: 2,
+      damage: 3,
+      text: "特になし",
+      image: "red1.png"
+      efect:"",
+    },
+    {
+      name: "奇跡の転生",
+      color: "blue",
+      level: ３,
+      damage: 1,
+      text: "自分の墓地からカードを2枚手札に加える",
+      image: "blue1.png"
+      efect:"",
+    },
+    {
+      name: "サイクロン",
+      color: "blue",
+      level: ３,
+      damage: 1,
+      text: "相手のデッキを2枚墓地へ送る",
+      image: "blue1.png"
+      efect:"",
+    },
+    {
+      name: "メテオ",
+      color: "yellow",
+      level: 2,
+      damage: ✖️1,
+      text: "経過ターン数✖️１ダメージ",
+      image: "yellow.png"
+      efect:"",
+    },
+    {
+      name: "双頭のガーゴイル",
+      color: "red",
+      level: 5,
+      damage: 4/2,
+      text: "このカードは場に出す際に赤か青かいずれか選んで出せる。赤の場合は４ダメージ　青の場合は２ダメージ",
+      image: "red.png"
+      efect:"",
+    },
+  ]
+};
+
+const enemy = {
+  hand: [],
+  deck: [
+    /* 同じ構造 */
+    {
+      name: "サーベル",
+      color: "red",
+      level: 2,
+      damage: 3,
+      text: "特になし",
+      image: "red1.png"
+      efect:"",
+    },
+    {
+      name: "奇跡の転生",
+      color: "blue",
+      level: ３,
+      damage: 1,
+      text: "自分の墓地からカードを2枚手札に加える",
+      image: "blue1.png"
+      efect:"",
+    },
+    {
+      name: "サイクロン",
+      color: "blue",
+      level: ３,
+      damage: 1,
+      text: "相手のデッキを2枚墓地へ送る",
+      image: "blue1.png"
+      efect:"",
+    },
+    {
+      name: "メテオ",
+      color: "yellow",
+      level: 2,
+      damage: ✖️1,
+      text: "経過ターン数✖️１ダメージ",
+      image: "yellow.png"
+      efect:"",
+    },
+    {
+      name: "双頭のガーゴイル",
+      color: "red",
+      level: 5,
+      damage: 4/2,
+      text: "このカードは場に出す際に赤か青かいずれか選んで出せる。赤の場合は４ダメージ　青の場合は２ダメージ",
+      image: "red.png"
+      efect:"",
+    },
+  ]
+};
+  
+//① 移動付き1枚ドロー
+function drawOneWithMove(playerObj, deckEl, handEl) {
+  if (playerObj.deck.length === 0) return;
+
+  // データ
+  const cardData = playerObj.deck.pop();
+  playerObj.hand.push(cardData);
+
+  // 山札の一番上のカードDOM
+  const cardEl = deckEl.lastElementChild;
+  if (!cardEl) return;
+
+  // 現在位置を取得
+  const from = cardEl.getBoundingClientRect();
+  const to = handEl.getBoundingClientRect();
+
+  // 一時的に fixed にする
+  cardEl.style.position = "fixed";
+  cardEl.style.left = from.left + "px";
+  cardEl.style.top  = from.top  + "px";
+  cardEl.style.transition = "all 0.4s ease";
+  cardEl.style.zIndex = 1000;
+
+  // DOM上はいったん body に出す
+  document.body.appendChild(cardEl);
+
+  // 次のフレームで移動開始（重要）
+  requestAnimationFrame(() => {
+    cardEl.style.left = (to.left + playerObj.hand.length * 80) + "px";
+    cardEl.style.top  = to.top + "px";
+  });
+
+  // 移動完了後
+  setTimeout(() => {
+    // レイアウト管理を戻す
+    cardEl.style.position = "";
+    cardEl.style.left = "";
+    cardEl.style.top = "";
+    cardEl.style.transition = "";
+    cardEl.style.zIndex = "";
+
+    // 手札に正式に入れる
+    handEl.appendChild(cardEl);
+
+    // 表向きにする
+    cardEl.classList.remove("back");
+    cardEl.classList.add("front");
+    cardEl.innerHTML = createCardHTML(cardData);
+  }, 400);
 }
   
-/* ===== 初期手札を作る　カードを初期化して作り直す ===== */
-
-function createCardElement(card, isPlayer) {
-  const div = document.createElement("div");
-  div.className = `card color-${card.color}`;
-
-  div.innerHTML = `
-    <div class="level">
-      <span>Lv.</span><strong>${card.level}</strong>
-    </div>
-    <div class="damage">${card.damage}</div>
-  `;
-
-  if (isPlayer) {
-    div.onclick = () => openPlayerCard(card, card.level >= 2);
-  } else {
-    div.onclick = () => openEnemyCard(card.level, card.damage);
-  }
-
-  return div;
-}
-/* ===== 初期手札を作る　相手と自分の手札を０にしてから3枚になるまでカード追加 ===== */
-
-function setupInitialHands() {
-  const playerHand = document.querySelector(".self-area .hand");
-  const enemyHand  = document.querySelector(".enemy-area .hand");
-
-  playerHand.innerHTML = "";
-  enemyHand.innerHTML = "";
-
-  for (let i = 0; i < 3; i++) {
-    playerHand.appendChild(createCardElement(randomCard(), true));
-    enemyHand.appendChild(createCardElement(randomCard(), false));
+//② 3枚になるまでドロー（演出込み）
+  async function drawUntilThree(playerObj, deckEl, handEl) {
+  while (
+    playerObj.hand.length < 3 &&
+    playerObj.deck.length > 0
+  ) {
+    drawOneWithMove(playerObj, deckEl, handEl);
+    await new Promise(r => setTimeout(r, 500));
   }
 }
+//③ 初期化例
+renderDeck(playerDeckEl, player.deck);
+drawUntilThree(player, playerDeckEl, playerHandEl);
 
 
 
