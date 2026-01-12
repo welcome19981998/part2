@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>三色闘戯 | Battle</title>
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f1220;
+  font-family: system-ui, sans-serif;
+  color: #eaeaf0;
+}
+
+/* ===== 縦キャンバス ===== */
+.app-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app {
+  width: 360px;
+  height: 640px;
+  background: linear-gradient(180deg, #1c2150, #171a2e);
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  transform-origin: center;
+}
+
+/* ===== プレイヤーエリア ===== */
+.player-area {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.enemy-area { align-items: flex-start; }
+.self-area  { align-items: flex-end; }
+
+/* ===== デッキ・墓地 ===== */
+.zone-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.life {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.zone {
+  width: 72px;
+  height: 96px;
+  background: #2a2f55;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== 手札 ===== */
+.hand {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== カード ===== */
+.card, .card-large, .battle-card {
+  background: #4f6bff;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+/* 通常 */
+.card {
+  width: 72px;
+  height: 96px;
+}
+
+/* 拡大 */
+.card-large {
+  width: 260px;
+  height: 360px;
+  border-radius: 20px;
+}
+
+/* バトル用 */
+.battle-card {
+  width: 120px;
+  height: 160px;
+  border-radius: 14px;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+/* ===== レベル & ダメージ（共通サイズ） ===== */
+.level, .damage {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.level {
+  top: 6px;
+  left: 6px;
+  flex-direction: column;
+}
+
+.level span {
+  font-size: 0.45rem;
+  line-height: 1;
+}
+
+.level strong {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.damage {
+  bottom: 6px;
+  right: 6px;
+  font-size: 0.75rem;
+}
+
+/* ===== 中央 ===== */
+.battlefield {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.7;
+}
+
+/* ===== モーダル ===== */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.65);
+  justify-content: center;
+  align-items: center;
+  z-index: 9000;
+}
+
+.modal-canvas {
+  width: 360px;
+  height: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-origin: center;
+}
+
+.card-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.modal-buttons {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-buttons button {
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.primary { background: #4f6bff; color: #fff; }
+.secondary { background: #2a2f55; color: #fff; }
+
+/* ===== バトル演出 ===== */
+.battle-cards {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  z-index: 8000;
+}
+
+.win {
+  transform: scale(1.3);
+  z-index: 2;
+}
+
+.lose {
+  transform: scale(0.85);
+  opacity: 0.4;
+}
+
+.draw {
+  animation: shake 0.4s ease-in-out 2;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.result-text {
+  position: absolute;
+  bottom: 100px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.result-text.show { opacity: 1; }
+
+  /* ===== カード色 ===== */
+.card.color-red,
+.card-large.color-red,
+.battle-card.color-red {
+  background: linear-gradient(180deg, #ff5a5a, #b83232);
+}
+
+.card.color-blue,
+.card-large.color-blue,
+.battle-card.color-blue {
+  background: linear-gradient(180deg, #4f6bff, #2f3fb8);
+}
+
+.card.color-yellow,
+.card-large.color-yellow,
+.battle-card.color-yellow {
+  background: linear-gradient(180deg, #ffd84f, #b89a2f);
+  color: #222;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app-wrapper">
+  <div class="app" id="app">
+
+    <!-- 相手 -->
+    <div class="player-area enemy-area">
+      <div class="zone-column">
+        <div class="life">ライフ:10</div>
+        <div class="zone">墓地</div>
+        <div class="zone">デッキ<br>15</div>
+      </div>
+      <div class="hand">
+        <div class="card" onclick="openEnemyCard(2,3)">
+          <div class="level"><span>Lv.</span><strong>2</strong></div>
+          <div class="damage">3</div>
+        </div>
+        <div class="card" onclick="openEnemyCard(0,0)">
+          <div class="level"><span>Lv.</span><strong>0</strong></div>
+          <div class="damage">0</div>
+        </div>
+        <div class="card" onclick="openEnemyCard(-1,'?')">
+          <div class="level"><span>Lv.</span><strong>-1</strong></div>
+          <div class="damage">?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="battlefield">カードを選択</div>
+
+    <!-- 自分 -->
+    <div class="player-area self-area">
+      <div class="hand">
+        <div class="card" onclick="openPlayerCard({level:3,damage:5,color:'red'}, true)">
+          <div class="level"><span>Lv.</span><strong>3</strong></div>
+          <div class="damage">5</div>
+        </div>
+        <div class="card" onclick="openPlayerCard({level:1,damage:2,color:'blue'}, false)">
+          <div class="level"><span>Lv.</span><strong>1</strong></div>
+          <div class="damage">2</div>
+        </div>
+        <div class="card" onclick="openPlayerCard({level:-2,damage:'?',color:'yellow'}, false)">
+          <div class="level"><span>Lv.</span><strong>-2</strong></div>
+          <div class="damage">?</div>
+        </div>
+      </div>
+      <div class="zone-column">
+        <div class="life">ライフ:10</div>
+        <div class="zone">墓地</div>
+        <div class="zone">デッキ<br>15</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== モーダル ===== -->
+<div class="card-modal" id="cardModal">
+  <div class="modal-canvas" id="modalCanvas">
+    <div class="card-modal-content">
+      <div class="card-large" id="modalCard"></div>
+      <div class="modal-buttons" id="modalButtons"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== バトル演出 ===== -->
+<div class="battle-cards" id="battleLayer">
+  <div class="battle-card" id="playerBattle"></div>
+  <div class="battle-card" id="enemyBattle"></div>
+  <div class="result-text" id="battleResult"></div>
+</div>
+
+<script>
+/* ===== 手札の配列を宣言 ===== */
+
+let playerHandCards = [];
+let enemyHandCards  = [];
+
+  /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
+const PLAYER_CARD_POOL = [
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture: "a" },
+  { level: -1, damage: 8, color: "yellow" },
+  { level: 0, damage: "×1", color: "blue" },
+  { level: 1, damage: 12, color: "blue" },
+  { level: 2, damage: "6/4", color: "red" },
+  { level: 3, damage: 5, color: "red" },
+];
+
+const ENEMY_CARD_POOL = [
+  { level: -1, damage: 1, color: "yellow" },
+  { level: 0, damage: 0, color: "blue" },
+  { level: 1, damage: 2, color: "blue" },
+  { level: 2, damage: 3, color: "red" },
+  { level: 1, damage: 2, color: "blue" },
+  { level: 2, damage: 3, color: "red" },
+  { level: 3, damage: 2, color: "red" },
+];
+
+/* ===== プレイヤーと敵のデッキを作る ===== */
+  function createDeck(pool, size) {
+  const deck = [];
+  for (let i = 0; i < size; i++) {
+    const base = pool[Math.floor(Math.random() * pool.length)];
+    deck.push({ ...base }); // コピー
+  }
+  return deck;
+}
+
+
+let playerDeck = [];
+let enemyDeck = [];
+  
+/* ===== 初期手札を作る　カードを初期化して作り直す ===== */
+
+function createCardElement(card, isPlayer) {
+  const div = document.createElement("div");
+  div.className = `card color-${card.color}`;
+
+  div.innerHTML = `
+    <div class="level">
+      <span>Lv.</span><strong>${card.level}</strong>
+    </div>
+    <div class="damage">${card.damage}</div>
+  `;
+
+  if (isPlayer) {
+    div.onclick = () => openPlayerCard(card, card.level >= 2);
+  } else {
+    div.onclick = () => openEnemyCard(card.level, card.damage);
+  }
+
+  return div;
+}
+/* ===== 初期手札を作る　自分と敵の手札をデッキから3枚になるまでカード追加 ===== */
+
+function setupInitialHands() {
+  const playerHand = document.querySelector(".self-area .hand");
+  const enemyHand  = document.querySelector(".enemy-area .hand");
+
+  playerHand.innerHTML = "";
+  enemyHand.innerHTML = "";
+
+  // 追加　手札の配列
+  playerHandCards = [];
+　enemyHandCards  = [];
+
+
+  // デッキを作成
+  playerDeck = createDeck(PLAYER_CARD_POOL, PLAYER_CARD_POOL.length);
+  enemyDeck  = createDeck(ENEMY_CARD_POOL, ENEMY_CARD_POOL.length);
+
+  // 初期手札3枚
+  for (let i = 0; i < 3; i++) {
+    const pCard = playerDeck.pop();
+    const eCard = enemyDeck.pop();
+    
+  // 追加　手札の配列の操作
+　　playerHandCards.push(pCard);
+　　enemyHandCards.push(eCard);
+
+　　playerHand.appendChild(createCardElement(pCard, true));
+　　enemyHand.appendChild(createCardElement(eCard, false));
+
+  }
+}
+
+
+
+
+/* ===== スケール ===== */
+function fit(el,w,h){
+  const s=Math.min(innerWidth/w,innerHeight/h);
+  el.style.transform=`scale(${s})`;
+}
+const app=document.getElementById("app");
+const modalCanvas=document.getElementById("modalCanvas");
+addEventListener("resize",()=>{fit(app,360,640);fit(modalCanvas,360,640);});
+fit(app,360,640);fit(modalCanvas,360,640);
+
+/* ===== モーダル ===== */
+const cardModal=document.getElementById("cardModal");
+const modalCard=document.getElementById("modalCard");
+const modalButtons=document.getElementById("modalButtons");
+let selectedCard=null;
+
+function openPlayerCard(card, hasChoice){
+  selectedCard=card;
+  modalCard.className = `card-large color-${card.color}`;
+  modalCard.innerHTML=createCardHTML(card);
+  modalButtons.innerHTML="";
+
+  if(hasChoice){
+    ["red","blue"].forEach(c=>{
+      addBtn(c+"として出す",()=>{card.color=c;closeAndBattle();});
+    });
+  }else{
+    addBtn("場に出す",closeAndBattle);
+  }
+  addClose();
+  cardModal.style.display="flex";
+}
+
+function openEnemyCard(l,d){
+  modalCard.innerHTML=createCardHTML({level:l,damage:d});
+  modalButtons.innerHTML="";
+  addClose();
+  cardModal.style.display="flex";
+}
+
+function addBtn(text,fn){
+  const b=document.createElement("button");
+  b.textContent=text;
+  b.className="primary";
+  b.onclick=fn;
+  modalButtons.appendChild(b);
+}
+function addClose(){
+  const b=document.createElement("button");
+  b.textContent="閉じる";
+  b.className="secondary";
+  b.onclick=()=>cardModal.style.display="none";
+  modalButtons.appendChild(b);
+}
+
+function createCardHTML(c){
+  return `<div class="level"><span>Lv.</span><strong>${c.level}</strong></div>
+          <div class="damage">${c.damage}</div>`;
+}
+
+/* ===== バトル ===== */
+  //ロジック１　敵の手札確認後、ランダムに一枚選ぶ
+function enemyChooseRandomCard() {
+  if (enemyHandCards.length === 0) return null;
+
+  const index = Math.floor(Math.random() * enemyHandCards.length);
+  return enemyHandCards[index];
+}
+//敵が選んだカードが使われる
+function closeAndBattle(){
+  cardModal.style.display = "none";
+
+  const enemyCard = enemyChooseRandomCard();
+  if (!enemyCard) return;
+
+  startBattle(selectedCard, enemyCard);
+}
+
+
+function judge(p,e){
+  if(p===e) return "draw";
+  if((p==="red"&&e==="yellow")||(p==="yellow"&&e==="blue")||(p==="blue"&&e==="red")) return "win";
+  return "lose";
+}
+
+function startBattle(pCard,eCard){
+  const layer=document.getElementById("battleLayer");
+  const p=document.getElementById("playerBattle");
+  const e=document.getElementById("enemyBattle");
+  const r=document.getElementById("battleResult");
+
+  layer.style.display="flex";
+  p.className = `battle-card color-${pCard.color}`;
+  e.className = `battle-card color-${eCard.color}`;
+  r.className="result-text";
+
+  p.innerHTML=createCardHTML(pCard);
+  e.innerHTML=createCardHTML(eCard);
+
+  setTimeout(()=>{
+    const res=judge(pCard.color,eCard.color);
+    if(res==="win"){p.classList.add("win");e.classList.add("lose");r.textContent="YOU WIN";}
+    else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
+    else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
+    r.classList.add("show");
+    setTimeout(()=>layer.style.display="none",2000);
+  },500);
+}
+/* ===== ページを読み込んでから手札を読み込む===== */
+
+setupInitialHands();
+
+</script>
+
+</body>
+</html>
