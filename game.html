@@ -337,7 +337,8 @@ html, body {
 
 <script>
 /* ===== 初期手札を作る ===== */
-  const CARD_POOL = [
+  /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
+const PLAYER_CARD_POOL = [
   { level: -2, damage: "?", color: "yellow" },
   { level: -1, damage: 1, color: "yellow" },
   { level: 0, damage: 0, color: "blue" },
@@ -345,12 +346,21 @@ html, body {
   { level: 2, damage: 3, color: "red" },
   { level: 3, damage: 5, color: "red" },
 ];
-/* ===== 初期手札を作る　ランダムにカードプールから引き出す ===== */
 
-  function randomCard() {
-  const base = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
-  return { ...base }; // 重要：コピーする
-}
+const ENEMY_CARD_POOL = [
+  { level: -1, damage: 1, color: "yellow" },
+  { level: 0, damage: 0, color: "blue" },
+  { level: 1, damage: 2, color: "blue" },
+  { level: 2, damage: 3, color: "red" },
+  { level: 1, damage: 2, color: "blue" },
+  { level: 2, damage: 3, color: "red" },
+  { level: 3, damage: 5, color: "red" },
+];
+
+/* ===== プレイヤーと敵のデッキを作る ===== */
+
+let playerDeck = [];
+let enemyDeck = [];
   
 /* ===== 初期手札を作る　カードを初期化して作り直す ===== */
 
@@ -373,7 +383,7 @@ function createCardElement(card, isPlayer) {
 
   return div;
 }
-/* ===== 初期手札を作る　相手と自分の手札を０にしてから3枚になるまでカード追加 ===== */
+/* ===== 初期手札を作る　自分と敵の手札をデッキから3枚になるまでカード追加 ===== */
 
 function setupInitialHands() {
   const playerHand = document.querySelector(".self-area .hand");
@@ -382,11 +392,20 @@ function setupInitialHands() {
   playerHand.innerHTML = "";
   enemyHand.innerHTML = "";
 
+  // デッキを作成
+  playerDeck = createDeck(PLAYER_CARD_POOL, PLAYER_CARD_POOL.length);
+  enemyDeck  = createDeck(ENEMY_CARD_POOL, ENEMY_CARD_POOL.length);
+
+  // 初期手札3枚
   for (let i = 0; i < 3; i++) {
-    playerHand.appendChild(createCardElement(randomCard(), true));
-    enemyHand.appendChild(createCardElement(randomCard(), false));
+    const pCard = playerDeck.pop();
+    const eCard = enemyDeck.pop();
+
+    playerHand.appendChild(createCardElement(pCard, true));
+    enemyHand.appendChild(createCardElement(eCard, false));
   }
 }
+
 
 
 
