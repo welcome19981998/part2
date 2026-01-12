@@ -339,11 +339,11 @@ html, body {
 /* ===== 初期手札を作る ===== */
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
-  { level: -2, damage: "?", color: "yellow" },
-  { level: -1, damage: 1, color: "yellow" },
-  { level: 0, damage: 0, color: "blue" },
-  { level: 1, damage: 2, color: "blue" },
-  { level: 2, damage: 3, color: "red" },
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト,"picture: "a.png" },
+  { level: -1, damage: 8, color: "yellow" },
+  { level: 0, damage: ×1, color: "blue" },
+  { level: 1, damage: 12, color: "blue" },
+  { level: 2, damage: 6/4, color: "red" },
   { level: 3, damage: 5, color: "red" },
 ];
 
@@ -354,7 +354,7 @@ const ENEMY_CARD_POOL = [
   { level: 2, damage: 3, color: "red" },
   { level: 1, damage: 2, color: "blue" },
   { level: 2, damage: 3, color: "red" },
-  { level: 3, damage: 5, color: "red" },
+  { level: 3, damage: 2, color: "red" },
 ];
 
 /* ===== プレイヤーと敵のデッキを作る ===== */
