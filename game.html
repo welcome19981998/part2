@@ -358,6 +358,15 @@ const ENEMY_CARD_POOL = [
 ];
 
 /* ===== プレイヤーと敵のデッキを作る ===== */
+  function createDeck(pool, size) {
+  const deck = [];
+  for (let i = 0; i < size; i++) {
+    const base = pool[Math.floor(Math.random() * pool.length)];
+    deck.push({ ...base }); // コピー
+  }
+  return deck;
+}
+
 
 let playerDeck = [];
 let enemyDeck = [];
