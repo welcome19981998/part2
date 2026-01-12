@@ -258,6 +258,40 @@ html, body {
   background: linear-gradient(180deg, #ffd84f, #b89a2f);
   color: #222;
 }
+/* ===== 通常カード用画像 ===== */
+.card-image {
+  position: absolute;
+  top: 26px;
+  left: 8px;
+  right: 8px;
+  bottom: 26px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+}
+/* ===== 拡大カード用画像 ===== */
+.card-large .card-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
+.card-large .card-image {
+  height: 180px;
+  margin: 12px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 12px;
+}
+
+.card-large .card-text {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  padding: 0 12px 12px;
+  text-align: left;
+}
+
 
 </style>
 </head>
@@ -343,7 +377,7 @@ let enemyHandCards  = [];
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
-  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture: "a" },
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture: `<img src="images/デュラハン.png" />` },
   { level: -1, damage: 8, color: "yellow" },
   { level: 0, damage: "×1", color: "blue" },
   { level: 1, damage: 12, color: "blue" },
@@ -374,6 +408,45 @@ const ENEMY_CARD_POOL = [
 
 let playerDeck = [];
 let enemyDeck = [];
+
+/* ===== 画像付き手札を作る ===== */
+
+function createHandCardHTML(card) {
+  return `
+    <div class="level">
+      <span>Lv.</span><strong>${card.level}</strong>
+    </div>
+
+    <div class="card-image">
+      ${card.picture ?? ""}
+    </div>
+
+    <div class="damage">${card.damage}</div>
+  `;
+}
+
+/* ===== 画像付き拡大手札を作る ===== */
+
+function createLargeCardHTML(card) {
+  return `
+    <div class="level">
+      <span>Lv.</span><strong>${card.level}</strong>
+    </div>
+
+    <div class="card-name">${card.name ?? ""}</div>
+
+    <div class="card-image">
+      ${card.picture ?? ""}
+    </div>
+
+    <div class="card-text">
+      ${card.text ?? ""}
+    </div>
+
+    <div class="damage">${card.damage}</div>
+  `;
+}
+
   
 /* ===== 初期手札を作る　カードを初期化して作り直す ===== */
 
@@ -381,12 +454,7 @@ function createCardElement(card, isPlayer) {
   const div = document.createElement("div");
   div.className = `card color-${card.color}`;
 
-  div.innerHTML = `
-    <div class="level">
-      <span>Lv.</span><strong>${card.level}</strong>
-    </div>
-    <div class="damage">${card.damage}</div>
-  `;
+div.innerHTML = createHandCardHTML(card);
 
   if (isPlayer) {
     div.onclick = () => openPlayerCard(card, card.level >= 2);
@@ -451,7 +519,7 @@ let selectedCard=null;
 function openPlayerCard(card, hasChoice){
   selectedCard=card;
   modalCard.className = `card-large color-${card.color}`;
-  modalCard.innerHTML=createCardHTML(card);
+  modalCard.innerHTML = createLargeCardHTML(card);
   modalButtons.innerHTML="";
 
   if(hasChoice){
