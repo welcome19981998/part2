@@ -336,7 +336,11 @@ html, body {
 </div>
 
 <script>
-/* ===== 初期手札を作る ===== */
+/* ===== 手札の配列を宣言 ===== */
+
+let playerHandCards = [];
+let enemyHandCards  = [];
+
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
   { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture: "a" },
@@ -401,6 +405,11 @@ function setupInitialHands() {
   playerHand.innerHTML = "";
   enemyHand.innerHTML = "";
 
+  // 追加　手札の配列
+  playerHandCards = [];
+　enemyHandCards  = [];
+
+
   // デッキを作成
   playerDeck = createDeck(PLAYER_CARD_POOL, PLAYER_CARD_POOL.length);
   enemyDeck  = createDeck(ENEMY_CARD_POOL, ENEMY_CARD_POOL.length);
@@ -409,9 +418,14 @@ function setupInitialHands() {
   for (let i = 0; i < 3; i++) {
     const pCard = playerDeck.pop();
     const eCard = enemyDeck.pop();
+    
+  // 追加　手札の配列の操作
+　　playerHandCards.push(pCard);
+　　enemyHandCards.push(eCard);
 
-    playerHand.appendChild(createCardElement(pCard, true));
-    enemyHand.appendChild(createCardElement(eCard, false));
+　　playerHand.appendChild(createCardElement(pCard, true));
+　　enemyHand.appendChild(createCardElement(eCard, false));
+
   }
 }
 
@@ -479,11 +493,23 @@ function createCardHTML(c){
 }
 
 /* ===== バトル ===== */
-function closeAndBattle(){
-  cardModal.style.display="none";
-  const enemy={level:2,damage:3,color:"blue"};
-  startBattle(selectedCard,enemy);
+  //ロジック１　敵の手札確認後、ランダムに一枚選ぶ
+function enemyChooseRandomCard() {
+  if (enemyHandCards.length === 0) return null;
+
+  const index = Math.floor(Math.random() * enemyHandCards.length);
+  return enemyHandCards[index];
 }
+//敵が選んだカードが使われる
+function closeAndBattle(){
+  cardModal.style.display = "none";
+
+  const enemyCard = enemyChooseRandomCard();
+  if (!enemyCard) return;
+
+  startBattle(selectedCard, enemyCard);
+}
+
 
 function judge(p,e){
   if(p===e) return "draw";
