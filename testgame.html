@@ -305,7 +305,7 @@ html, body {
 .card-large.color-yellow,
 .battle-card.color-yellow {
   background: linear-gradient(180deg, #ffd84f, #b89a2f);
-  color: #222;
+  /*color: #222;*/
 }
 /* ===== 通常カード用画像 ===== */
 .card-image {
@@ -584,10 +584,10 @@ function openPlayerCard(card, hasChoice){
 
 function openEnemyCard(card){
   modalCard.className = `card-large color-${card.color}`;
-  modalCard.innerHTML = createCardHTML(card);
-  modalButtons.innerHTML="";
+  modalCard.innerHTML = createLargeCardHTML(card);
+  modalButtons.innerHTML = "";
   addClose();
-  cardModal.style.display="flex";
+  cardModal.style.display = "flex";
 }
 
 function addBtn(text,fn){
@@ -618,7 +618,7 @@ function createCardHTML(card) {
       </div>
 
       <div class="card-image">
-        <img src="${card.image}" alt="${card.name}">
+       ${card.picture ?? ""}
       </div>
 
       <div class="card-text">
