@@ -264,6 +264,9 @@ html, body {
   border-radius: 20px;
   --ui-scale: 1.8;
   overflow: hidden;
+
+  display: flex;          
+  flex-direction: column;
 }
 
 .win {
@@ -623,10 +626,9 @@ function openPlayerCard(card, hasChoice){
   if(hasChoice){
     ["red","blue"].forEach(c=>{
       addBtn(c + "として出す", () => {
-       const battleCard = { ...card, color: c };
-       closeAndBattle(battleCard);
+       selectedCard.color = c;
+       closeAndBattle();
       });
-
     });
   }else{
     addBtn("場に出す",closeAndBattle);
@@ -705,18 +707,18 @@ function enemyChooseRandomCard() {
 }
  
 //敵が選んだカードが使われる
-function closeAndBattle(battlePlayerCard = null){
+function closeAndBattle(){
   cardModal.style.display = "none";
 
   const enemyCard = enemyChooseRandomCard();
-  if (!enemyCard) return;
+  if (!enemyCard || !selectedCard) return;
 
-  const actualBattleCard = battlePlayerCard ?? selectedCard;
-
-  startBattle(actualBattleCard, enemyCard);
+  startBattle(selectedCard, enemyCard);
 
   removeUsedPlayerCard(selectedCard);
   redrawEnemyHand();
+
+  selectedCard = null; // ★次のターンに備える
 }
 
 function judge(p,e){
