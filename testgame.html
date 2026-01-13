@@ -355,7 +355,8 @@ html, body {
   padding: 0 12px 12px;
   text-align: left;
 }
-  /* 「absolute指定は通常カードだけ」に限定通常カード専用 */
+
+/* 通常カード専用 */
 .card > .card-image {
   position: absolute;
   top: 26px;
@@ -364,10 +365,12 @@ html, body {
   bottom: 26px;
 }
 
-/* バトル・拡大カードはflexに戻す */
+/* 拡大・バトルはflexに戻す */
 .card-large .card-image,
 .battle-card .card-image {
   position: static;
+  margin: calc(6px * var(--ui-scale)) 0;
+  flex: 1;
 }
 
 </style>
@@ -708,11 +711,12 @@ function closeAndBattle(battlePlayerCard = null){
   const enemyCard = enemyChooseRandomCard();
   if (!enemyCard) return;
 
-  const pCard = battlePlayerCard ?? selectedCard;
-  startBattle(pCard, enemyCard);
+  const actualBattleCard = battlePlayerCard ?? selectedCard;
+
+  startBattle(actualBattleCard, enemyCard);
 
   removeUsedPlayerCard(selectedCard);
-  redrawEnemyHand();   // ← ★これを追加
+  redrawEnemyHand();
 }
 
 function judge(p,e){
@@ -736,7 +740,10 @@ function startBattle(pCard,eCard){
   e.innerHTML=createCardHTML(eCard);
 
   setTimeout(()=>{
-    const res=judge(pCard.color,eCard.color);
+    const res = judge(
+     actualBattleCard.color,
+     enemyCard.color
+    );
     if(res==="win"){p.classList.add("win");e.classList.add("lose");r.textContent="YOU WIN";}
     else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
     else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
