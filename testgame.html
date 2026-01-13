@@ -459,7 +459,7 @@ div.innerHTML = createHandCardHTML(card);
   if (isPlayer) {
     div.onclick = () => openPlayerCard(card, card.level >= 2);
   } else {
-    div.onclick = () => openEnemyCard(card.level, card.damage);
+    div.onclick = () => openEnemyCard(card);
   }
 
   return div;
@@ -533,8 +533,9 @@ function openPlayerCard(card, hasChoice){
   cardModal.style.display="flex";
 }
 
-function openEnemyCard(l,d){
-  modalCard.innerHTML=createCardHTML({level:l,damage:d});
+function openEnemyCard(card){
+  modalCard.className = `card-large color-${card.color}`;
+  modalCard.innerHTML = createCardHTML(card);
   modalButtons.innerHTML="";
   addClose();
   cardModal.style.display="flex";
