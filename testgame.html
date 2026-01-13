@@ -546,8 +546,26 @@ function setupInitialHands() {
   }
 }
 
+/* ===== 使用したカードを手札から削除 ===== */
 
+function removeUsedPlayerCard(card){
+  const index = playerHandCards.indexOf(card);
+  if (index === -1) return;
 
+  playerHandCards.splice(index, 1);
+  redrawPlayerHand();
+}
+
+/* ===== 自分の手札を再描画 ===== */
+
+function redrawPlayerHand(){
+  const hand = document.querySelector(".self-area .hand");
+  hand.innerHTML = "";
+
+  playerHandCards.forEach(card => {
+    hand.appendChild(createCardElement(card, true));
+  });
+}
 
 /* ===== スケール ===== */
 function fit(el,w,h){
@@ -573,7 +591,11 @@ function openPlayerCard(card, hasChoice){
 
   if(hasChoice){
     ["red","blue"].forEach(c=>{
-      addBtn(c+"として出す",()=>{card.color=c;closeAndBattle();});
+      addBtn(c + "として出す", () => {
+       const battleCard = { ...card, color: c };
+       closeAndBattle(battleCard);
+      });
+
     });
   }else{
     addBtn("場に出す",closeAndBattle);
@@ -637,18 +659,20 @@ function enemyChooseRandomCard() {
   if (enemyHandCards.length === 0) return null;
 
   const index = Math.floor(Math.random() * enemyHandCards.length);
-  return enemyHandCards[index];
+  return enemyHandCards.splice(index, 1)[0];
 }
 //敵が選んだカードが使われる
-function closeAndBattle(){
+function closeAndBattle(battlePlayerCard = null){
   cardModal.style.display = "none";
 
   const enemyCard = enemyChooseRandomCard();
   if (!enemyCard) return;
 
-  startBattle(selectedCard, enemyCard);
-}
+  const pCard = battlePlayerCard ?? selectedCard;
+  startBattle(pCard, enemyCard);
 
+  removeUsedPlayerCard(selectedCard);
+}
 
 function judge(p,e){
   if(p===e) return "draw";
