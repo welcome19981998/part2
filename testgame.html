@@ -355,7 +355,20 @@ html, body {
   padding: 0 12px 12px;
   text-align: left;
 }
+  /* 「absolute指定は通常カードだけ」に限定通常カード専用 */
+.card > .card-image {
+  position: absolute;
+  top: 26px;
+  left: 8px;
+  right: 8px;
+  bottom: 26px;
+}
 
+/* バトル・拡大カードはflexに戻す */
+.card-large .card-image,
+.battle-card .card-image {
+  position: static;
+}
 
 </style>
 </head>
@@ -676,6 +689,18 @@ function enemyChooseRandomCard() {
   const index = Math.floor(Math.random() * enemyHandCards.length);
   return enemyHandCards.splice(index, 1)[0];
 }
+  
+/* ===== 敵の手札再描画関数を作る ===== */
+
+ function redrawEnemyHand(){
+  const hand = document.querySelector(".enemy-area .hand");
+  hand.innerHTML = "";
+
+  enemyHandCards.forEach(card => {
+    hand.appendChild(createCardElement(card, false));
+  });
+}
+ 
 //敵が選んだカードが使われる
 function closeAndBattle(battlePlayerCard = null){
   cardModal.style.display = "none";
@@ -687,6 +712,7 @@ function closeAndBattle(battlePlayerCard = null){
   startBattle(pCard, enemyCard);
 
   removeUsedPlayerCard(selectedCard);
+  redrawEnemyHand();   // ← ★これを追加
 }
 
 function judge(p,e){
