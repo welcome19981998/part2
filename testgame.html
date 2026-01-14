@@ -575,11 +575,24 @@ function addClose(){
 
 function createCardHTML(c){
   return `
-    <div class="level"><span>Lv.</span><strong>${c.level}</strong></div>
-    <div class="card-name">${c.name ?? ""}</div>
-    <div class="card-image">${c.picture ?? ""}</div>
-    <div class="card-text">${c.text ?? ""}</div>
-    <div class="damage">${c.damage}</div>
+    <div class="card-inner">
+      <div class="card-header">
+        <div class="level">
+          <span>Lv.</span><strong>${c.level}</strong>
+        </div>
+        <div class="card-name">${c.name ?? ""}</div>
+      </div>
+
+      <div class="card-image">
+        ${c.picture ?? ""}
+      </div>
+
+      <div class="card-text">
+        ${c.text ?? ""}
+      </div>
+
+      <div class="damage">${c.damage}</div>
+    </div>
   `;
 }
 
