@@ -478,24 +478,28 @@ function createHandCardHTML(card) {
 
 function createLargeCardHTML(card) {
   return `
-    <div class="level">
-      <span>Lv.</span><strong>${card.level}</strong>
+    <div class="card-inner">
+
+      <div class="card-header">
+        <div class="level">
+          <span>Lv.</span><strong>${card.level}</strong>
+        </div>
+        <div class="card-name">${card.name ?? ""}</div>
+      </div>
+
+      <div class="card-image">
+        ${card.picture ?? ""}
+      </div>
+
+      <div class="card-text">
+        ${card.text ?? ""}
+      </div>
+
+      <div class="damage">${card.damage}</div>
+
     </div>
-
-    <div class="card-name">${card.name ?? ""}</div>
-
-    <div class="card-image">
-      ${card.picture ?? ""}
-    </div>
-
-    <div class="card-text">
-      ${card.text ?? ""}
-    </div>
-
-    <div class="damage">${card.damage}</div>
   `;
 }
-
   
 /* ===== 初期手札を作る　カードを初期化して作り直す ===== */
 
