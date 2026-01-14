@@ -518,10 +518,11 @@ function setupInitialHands() {
 
 
 /* ===== スケール ===== */
-function fit(el,w,h){
-  const s=Math.min(innerWidth/w,innerHeight/h);
-  el.style.transform=`scale(${s})`;
+function fit(el, w, h) {
+  const s = Math.min(window.innerWidth / w, window.innerHeight / h);
+  el.style.transform = "scale(" + s + ")";
 }
+
 const app=document.getElementById("app");
 const modalCanvas=document.getElementById("modalCanvas");
 addEventListener("resize",()=>{fit(app,360,640);fit(modalCanvas,360,640);});
