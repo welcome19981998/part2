@@ -67,6 +67,7 @@ html, body {
   border-radius: 10px;
   font-size: 0.7rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -77,119 +78,235 @@ html, body {
   gap: 8px;
 }
 
+/* ===== カード ===== */
 /* ===== カード共通 ===== */
-.card, .card-large, .battle-card {
+.card,
+.card-large {
   position: relative;
   border-radius: 10px;
   cursor: pointer;
-  overflow: hidden;
+  --ui-scale: 1;
 }
 
-/* 通常カード */
 .card {
   width: 72px;
   height: 96px;
 }
 
-/* 拡大カード */
 .card-large {
   width: 260px;
   height: 360px;
   border-radius: 20px;
+  --ui-scale: 1.8;
 }
 
-/* バトルカード */
-.battle-card {
-  width: 120px;
-  height: 160px;
-  border-radius: 14px;
+/* ===== 内部レイアウト ===== */
+.card-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: calc(6px * var(--ui-scale));
 }
 
-/* ===== レベル & ダメージ ===== */
-.level, .damage {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background: #111;
-  border-radius: 50%;
+/* ===== 上部（Lv + 名前） ===== */
+.card-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #fff;
+  gap: calc(6px * var(--ui-scale));
+  height: calc(22px * var(--ui-scale));
 }
 
-.level {
-  top: 6px;
-  left: 6px;
-  flex-direction: column;
-}
-
-.level span { font-size: 0.45rem; }
-.level strong { font-size: 0.75rem; }
-
-.damage {
-  bottom: 6px;
-  right: 6px;
-  font-size: 0.75rem;
-}
-
-/* ===== 追加UI ===== */
 .card-name {
-  position: absolute;
-  top: 6px;
-  left: 34px;
-  right: 6px;
-  font-size: 0.55rem;
+  font-size: calc(0.6rem * var(--ui-scale));
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.card-image {
-  position: absolute;
-  top: 26px;
-  left: 6px;
-  right: 6px;
-  bottom: 26px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 6px;
+/* ===== レベル ===== */
+.level {
+  width: calc(22px * var(--ui-scale));
+  height: calc(22px * var(--ui-scale));
+  background: #111;
+  border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
+.level span {
+  font-size: calc(0.45rem * var(--ui-scale));
+  line-height: 1;
+}
+
+.level strong {
+  font-size: calc(0.75rem * var(--ui-scale));
+  line-height: 1;
+}
+
+/* ===== 画像 ===== */
+.card-image {
+  flex: 1;
+  margin: calc(6px * var(--ui-scale)) 0;
+  border-radius: calc(6px * var(--ui-scale));
+  overflow: hidden;
+}
+
 .card-image img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
+/* ===== テキスト ===== */
 .card-text {
+  font-size: calc(0.55rem * var(--ui-scale));
+  line-height: 1.3;
+  opacity: 0.9;
+  height: calc(32px * var(--ui-scale));
+  overflow: hidden;
+}
+
+/* 手札では非表示 */
+.card .card-text {
   display: none;
 }
 
-/* ===== 拡大時のみ全文表示 ===== */
-.card-large .card-name {
-  position: static;
-  font-size: 1.1rem;
-  margin: 12px;
+/* ===== ダメージ ===== */
+.damage {
+  position: absolute;
+  bottom: calc(6px * var(--ui-scale));
+  right: calc(6px * var(--ui-scale));
+  width: calc(22px * var(--ui-scale));
+  height: calc(22px * var(--ui-scale));
+  background: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(0.75rem * var(--ui-scale));
+  color: #fff;
 }
 
-.card-large .card-image {
-  position: static;
-  height: 180px;
-  margin: 0 12px;
+/* ===== 中央 ===== */
+.battlefield {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.7;
 }
 
-.card-large .card-text {
-  display: block;
-  padding: 12px;
-  font-size: 0.85rem;
-  line-height: 1.4;
+/* ===== モーダル ===== */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.65);
+  justify-content: center;
+  align-items: center;
+  z-index: 9000;
 }
 
-/* ===== カード色 ===== */
+.modal-canvas {
+  width: 360px;
+  height: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-origin: center;
+}
+
+.card-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.modal-buttons {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-buttons button {
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.primary { background: #4f6bff; color: #fff; }
+.secondary { background: #2a2f55; color: #fff; }
+
+/* ===== バトル演出 ===== */
+.battle-cards {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  z-index: 8000;
+}
+  
+/* ===== バトル用カード ずれを修正 ===== */
+.battle-card {
+  position: relative;
+  width: 260px;
+  height: 360px;
+  border-radius: 20px;
+  --ui-scale: 1.8;
+  overflow: hidden;
+
+  display: flex;          
+  flex-direction: column;
+}
+
+.win {
+  transform: scale(1.3);
+  z-index: 2;
+}
+
+.lose {
+  transform: scale(0.85);
+  opacity: 0.4;
+}
+  
+.battle-card.win,
+.battle-card.lose {
+  transition: transform 0.3s ease;
+}
+
+.draw {
+  animation: shake 0.4s ease-in-out 2;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.result-text {
+  position: absolute;
+  bottom: 100px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.result-text.show { opacity: 1; }
+
+  /* ===== カード色 ===== */
 .card.color-red,
 .card-large.color-red,
 .battle-card.color-red {
@@ -206,32 +323,58 @@ html, body {
 .card-large.color-yellow,
 .battle-card.color-yellow {
   background: linear-gradient(180deg, #ffd84f, #b89a2f);
-  color: #222;
+  /*color: #222;*/
 }
-
-/* ===== バトル演出 ===== */
-.battle-cards {
-  position: fixed;
-  inset: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  z-index: 8000;
-}
-
-.win { transform: scale(1.3); }
-.lose { transform: scale(0.85); opacity: 0.4; }
-
-.result-text {
+/* ===== 通常カード用画像 ===== */
+.card-image {
   position: absolute;
-  bottom: 100px;
-  font-size: 1.4rem;
-  font-weight: bold;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  top: 26px;
+  left: 8px;
+  right: 8px;
+  bottom: 26px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
 }
-.result-text.show { opacity: 1; }
+/* ===== 拡大カード用画像 ===== */
+.card-large .card-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
+.card-large .card-image {
+  height: 180px;
+  margin: 12px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 12px;
+}
+
+.card-large .card-text {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  padding: 0 12px 12px;
+  text-align: left;
+}
+
+/* 通常カード専用 */
+.card > .card-image {
+  position: absolute;
+  top: 26px;
+  left: 8px;
+  right: 8px;
+  bottom: 26px;
+}
+
+/* 拡大・バトルはflexに戻す */
+.card-large .card-image,
+.battle-card .card-image {
+  position: static;
+  margin: calc(6px * var(--ui-scale)) 0;
+  flex: 1;
+}
 </style>
 </head>
 
