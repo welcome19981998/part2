@@ -359,7 +359,24 @@ html, body {
   padding: 0 12px 12px;
   text-align: left;
 }
+/* ===== 画像カード専用 ===== */
+.card,
+.card-large,
+.battle-card {
+  background: none !important;
+  padding: 0;
+  overflow: hidden;
+}
 
+.card img,
+.card-large img,
+.battle-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
 
 </style>
 </head>
@@ -445,22 +462,21 @@ let enemyHandCards  = [];
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
-  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture: `<img src="dyurahan.png" />` },
-  { level: -1, damage: 8, color: "yellow" },
-  { level: 0, damage: "×1", color: "blue" },
-  { level: 1, damage: 12, color: "blue" },
-  { level: 2, damage: "6/4", color: "red",picture: `<img src="AIsamugobu.jpg" />` },
-  { level: 3, damage: 5, color: "red" },
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
+  { level: -1, damage: 8, color: "yellow",picture:"testyellow.jpg" },
+  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
+  { level: 1, damage: 12, color: "blue",picture:"testblue.jpg" },
+  { level: 2, damage: "6/4", color: "red",picture:"testred.jpg"},
+  { level: 3, damage: 5, color: "red",picture:"testred.jpg" },
 ];
 
 const ENEMY_CARD_POOL = [
-  { level: -1, damage: 1, color: "yellow" },
-  { level: 0, damage: 0, color: "blue" },
-  { level: 1, damage: 2, color: "blue" },
-  { level: 2, damage: 3, color: "red" },
-  { level: 1, damage: 2, color: "blue" },
-  { level: 2, damage: 3, color: "red" },
-  { level: 3, damage: 2, color: "red" },
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
+  { level: -1, damage: 8, color: "yellow",picture:"testyellow.jpg" },
+  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
+  { level: 1, damage: 12, color: "blue",picture:"testblue.jpg" },
+  { level: 2, damage: "6/4", color: "red",picture:"testred.jpg"},
+  { level: 3, damage: 5, color: "red",picture:"testred.jpg" },
 ];
 
 /* ===== プレイヤーと敵のデッキを作る ===== */
@@ -526,14 +542,13 @@ function createCardElement(card, isPlayer) {
   const div = document.createElement("div");
   div.className = `card color-${card.color}`;
 
-div.innerHTML = createHandCardHTML(card);
+div.innerHTML = createCardHTML(card);
 
   if (isPlayer) {
-    div.onclick = () => openPlayerCard(card, card.level >= 2);
+    div.onclick = () => openPlayerCard(card, false);
   } else {
     div.onclick = () => openEnemyCard(card);
   }
-
   return div;
 }
 /* ===== 初期手札を作る　自分と敵の手札をデッキから3枚になるまでカード追加 ===== */
@@ -591,7 +606,7 @@ let selectedCard=null;
 function openPlayerCard(card, hasChoice){
   selectedCard=card;
   modalCard.className = `card-large color-${card.color}`;
-  modalCard.innerHTML = createLargeCardHTML(card);
+  modalCard.innerHTML = createCardHTML(card);
   modalButtons.innerHTML="";
 
   if(hasChoice){
@@ -630,22 +645,8 @@ function addClose(){
   
 /* ===== 画像とテキストと名前付きカード作成 ===== */
   
-function createCardHTML(c){
-  return `
-    <div class="level">
-      <span>Lv.</span><strong>${c.level}</strong>
-    </div>
-
-    <div class="card-name">${c.name ?? ""}</div>
-
-    <div class="card-image">
-      ${c.picture ? `<img src="${c.picture}.png">` : ""}
-    </div>
-
-    <div class="card-text">${c.text ?? ""}</div>
-
-    <div class="damage">${c.damage}</div>
-  `;
+function createCardHTML(card){
+  return `<img src="${card.picture}" alt="">`;
 }
 
 /* ===== バトル ===== */
