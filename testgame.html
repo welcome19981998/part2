@@ -210,7 +210,9 @@ html, body {
   align-items: center;
   z-index: 9000;
 }
-
+.deckModal {
+  z-index: 8000; /* デッキモーダルが拡大モーダルより下にいくように */
+}
 .modal-canvas {
   width: 360px;
   height: 640px;
@@ -484,6 +486,12 @@ let enemyHandCards  = [];
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
+  { level: -1, damage: 8, color: "yellow",picture:"testyellow.jpg" },
+  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
+  { level: 1, damage: 12, color: "blue",picture:"testblue.jpg" },
+  { level: 2, damage: "6/4", color: "red",picture:"testred.jpg"},
+  { level: 3, damage: 5, color: "red",picture:"testred.jpg" },
   { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
   { level: -1, damage: 8, color: "yellow",picture:"testyellow.jpg" },
   { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
