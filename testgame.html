@@ -211,10 +211,17 @@ html, body {
   z-index: 9000;
 }
   
-/* デッキモーダル */
+/* デッキモーダル デフォルトは非表示 */
 #deckModal{
+  position: fixed;
+  inset: 0;
+  display: none;              
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
   z-index: 900;
 }
+
 
 /* カード拡大モーダル（最前面） */
 #cardModal{
