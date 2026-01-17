@@ -210,9 +210,17 @@ html, body {
   align-items: center;
   z-index: 9000;
 }
-.deckModal {
-  z-index: 8000; /* デッキモーダルが拡大モーダルより下にいくように */
+  
+/* デッキモーダル */
+#deckModal{
+  z-index: 900;
 }
+
+/* カード拡大モーダル（最前面） */
+#cardModal{
+  z-index: 2000;
+}
+  
 .modal-canvas {
   width: 360px;
   height: 640px;
@@ -252,6 +260,19 @@ html, body {
 
   justify-items: center;
   align-items: start;
+}
+/* デッキ確認モーダル画面は見出し防止 */
+#deckModal .modal-content{
+  width: min(92vw, 520px);
+  max-height: 90vh;
+
+  overflow-y: auto;
+}
+/* デッキ確認モーダル安全に中央固定 */
+#deckModal{
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .primary { background: #4f6bff; color: #fff; }
