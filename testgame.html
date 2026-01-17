@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>toricolor game | Battle</title>
+<title>挑戦環境 | Battle</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -241,12 +241,23 @@ html, body {
   font-size: 0.95rem;
   cursor: pointer;
 }
+/* デッキ確認モーダル専用 */
+#deckModal .hand {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 横3 */
+  grid-template-rows: repeat(4, auto);   /* 最大4段 */
+  gap: 12px;
+
+  justify-items: center;
+  align-items: start;
+}
 
 .primary { background: #4f6bff; color: #fff; }
 .secondary { background: #2a2f55; color: #fff; }
 
 /* ===== バトル演出 ===== */
 .battle-cards {
+  transform: none !important;
   position: fixed;
   inset: 0;
   display: none;
@@ -255,33 +266,33 @@ html, body {
   gap: 40px;
   z-index: 8000;
 }
-  
-/* ===== バトル用カード ずれを修正 ===== */
-.battle-card {
-  position: relative;
-  width: 260px;
-  height: 360px;
-  border-radius: 20px;
-  --ui-scale: 1.8;
-  overflow: hidden;
 
-  display: flex;          
-  flex-direction: column;
+.battle-card {
+  width: 120px;
+  height: 160px;
+  border-radius: 14px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
+}
+.battle-card .level {
+  top: 6px;
+  left: 6px;
 }
 
+.battle-card .damage {
+  bottom: 6px;
+  right: 6px;
+}
+
+
 .win {
-  transform: scale(1.3);
+  transform: scale(1.15);
   z-index: 2;
 }
 
 .lose {
-  transform: scale(0.85);
+  transform: scale(0.9);
   opacity: 0.4;
-}
-  
-.battle-card.win,
-.battle-card.lose {
-  transition: transform 0.3s ease;
 }
 
 .draw {
@@ -323,10 +334,12 @@ html, body {
 .card-large.color-yellow,
 .battle-card.color-yellow {
   background: linear-gradient(180deg, #ffd84f, #b89a2f);
-  /*color: #222;*/
+  color: #222;
 }
 /* ===== 通常カード用画像 ===== */
-.card-image {
+/* 通常カードだけ absolute にする */
+  
+.card > .card-image {
   position: absolute;
   top: 26px;
   left: 8px;
@@ -334,11 +347,8 @@ html, body {
   bottom: 26px;
   background: rgba(255,255,255,0.25);
   border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6rem;
 }
+
 /* ===== 拡大カード用画像 ===== */
 .card-large .card-name {
   font-weight: bold;
@@ -346,6 +356,7 @@ html, body {
   margin-top: 8px;
 }
 .card-large .card-image {
+  position: static;
   height: 180px;
   margin: 12px;
   background: rgba(255,255,255,0.25);
@@ -358,23 +369,25 @@ html, body {
   padding: 0 12px 12px;
   text-align: left;
 }
-
-/* 通常カード専用 */
-.card > .card-image {
-  position: absolute;
-  top: 26px;
-  left: 8px;
-  right: 8px;
-  bottom: 26px;
+/* ===== 画像カード専用 ===== */
+.card,
+.card-large,
+.battle-card {
+  background: none !important;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* 拡大・バトルはflexに戻す */
-.card-large .card-image,
-.battle-card .card-image {
-  position: static;
-  margin: calc(6px * var(--ui-scale)) 0;
-  flex: 1;
+.card img,
+.card-large img,
+.battle-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
 }
+
 </style>
 </head>
 
@@ -383,36 +396,80 @@ html, body {
 <div class="app-wrapper">
   <div class="app" id="app">
 
+    <!-- 相手 -->
     <div class="player-area enemy-area">
       <div class="zone-column">
         <div class="life">ライフ:10</div>
         <div class="zone">墓地</div>
         <div class="zone">デッキ<br>15</div>
       </div>
-      <div class="hand"></div>
+      <div class="hand">
+        <div class="card" onclick="openEnemyCard(2,3)">
+          <div class="level"><span>Lv.</span><strong>2</strong></div>
+          <div class="damage">3</div>
+        </div>
+        <div class="card" onclick="openEnemyCard(0,0)">
+          <div class="level"><span>Lv.</span><strong>0</strong></div>
+          <div class="damage">0</div>
+        </div>
+        <div class="card" onclick="openEnemyCard(-1,'?')">
+          <div class="level"><span>Lv.</span><strong>-1</strong></div>
+          <div class="damage">?</div>
+        </div>
+      </div>
     </div>
 
     <div class="battlefield">カードを選択</div>
 
+    <!-- 自分 -->
     <div class="player-area self-area">
-      <div class="hand"></div>
+      <div class="hand">
+        <div class="card" onclick="openPlayerCard({level:3,damage:5,color:'red'}, true)">
+          <div class="level"><span>Lv.</span><strong>3</strong></div>
+          <div class="damage">5</div>
+        </div>
+        <div class="card" onclick="openPlayerCard({level:1,damage:2,color:'blue'}, false)">
+          <div class="level"><span>Lv.</span><strong>1</strong></div>
+          <div class="damage">2</div>
+        </div>
+        <div class="card" onclick="openPlayerCard({level:-2,damage:'?',color:'yellow'}, false)">
+          <div class="level"><span>Lv.</span><strong>-2</strong></div>
+          <div class="damage">?</div>
+        </div>
+      </div>
       <div class="zone-column">
-        <div class="life">ライフ:10</div>
         <div class="zone">墓地</div>
-        <div class="zone">デッキ<br>15</div>
+        <div class="zone" onclick="openDeckModal()">デッキ<br>15</div>
+        <div class="life">ライフ:10</div>
       </div>
     </div>
 
   </div>
 </div>
 
+<!-- ===== モーダル ===== -->
 <div class="card-modal" id="cardModal">
   <div class="modal-canvas" id="modalCanvas">
-    <div class="card-large" id="modalCard"></div>
-    <div id="modalButtons"></div>
+    <div class="card-modal-content">
+      <div class="card-large" id="modalCard"></div>
+      <div class="modal-buttons" id="modalButtons"></div>
+    </div>
+  </div>
+</div>
+  
+  <!-- ===== デッキ確認モーダル ===== -->
+<div class="card-modal" id="deckModal">
+  <div class="modal-canvas">
+    <div class="card-modal-content">
+      <div class="hand" id="deckList"></div>
+      <div class="modal-buttons">
+        <button class="secondary" onclick="closeDeckModal()">閉じる</button>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- ===== バトル演出 ===== -->
 <div class="battle-cards" id="battleLayer">
   <div class="battle-card" id="playerBattle"></div>
   <div class="battle-card" id="enemyBattle"></div>
@@ -420,7 +477,6 @@ html, body {
 </div>
 
 <script>
-
 /* ===== 手札の配列を宣言 ===== */
 
 let playerHandCards = [];
@@ -428,22 +484,21 @@ let enemyHandCards  = [];
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
-  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture: "a" },
-  { level: -1, damage: 8, color: "yellow" },
-  { level: 0, damage: "×1", color: "blue" },
-  { level: 1, damage: 12, color: "blue" },
-  { level: 2, damage: "6/4", color: "red" },
-  { level: 3, damage: 5, color: "red" },
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
+  { level: -1, damage: 8, color: "yellow",picture:"testyellow.jpg" },
+  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
+  { level: 1, damage: 12, color: "blue",picture:"testblue.jpg" },
+  { level: 2, damage: "6/4", color: "red",picture:"testred.jpg"},
+  { level: 3, damage: 5, color: "red",picture:"testred.jpg" },
 ];
 
 const ENEMY_CARD_POOL = [
-  { level: -1, damage: 1, color: "yellow" },
-  { level: 0, damage: 0, color: "blue" },
-  { level: 1, damage: 2, color: "blue" },
-  { level: 2, damage: 3, color: "red" },
-  { level: 1, damage: 2, color: "blue" },
-  { level: 2, damage: 3, color: "red" },
-  { level: 3, damage: 2, color: "red" },
+  { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
+  { level: -1, damage: 8, color: "yellow",picture:"testyellow.jpg" },
+  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
+  { level: 1, damage: 12, color: "blue",picture:"testblue.jpg" },
+  { level: 2, damage: "6/4", color: "red",picture:"testred.jpg"},
+  { level: 3, damage: 5, color: "red",picture:"testred.jpg" },
 ];
 
 /* ===== プレイヤーと敵のデッキを作る ===== */
@@ -466,19 +521,13 @@ function createCardElement(card, isPlayer) {
   const div = document.createElement("div");
   div.className = `card color-${card.color}`;
 
-  div.innerHTML = `
-    <div class="level">
-      <span>Lv.</span><strong>${card.level}</strong>
-    </div>
-    <div class="damage">${card.damage}</div>
-  `;
+div.innerHTML = createCardHTML(card);
 
   if (isPlayer) {
-    div.onclick = () => openPlayerCard(card, card.level >= 2);
+    div.onclick = () => openPlayerCard(card, false);
   } else {
-    div.onclick = () => openEnemyCard(card.level, card.damage);
+    div.onclick = () => openEnemyCard(card);
   }
-
   return div;
 }
 /* ===== 初期手札を作る　自分と敵の手札をデッキから3枚になるまでカード追加 ===== */
@@ -518,11 +567,10 @@ function setupInitialHands() {
 
 
 /* ===== スケール ===== */
-function fit(el, w, h) {
-  const s = Math.min(window.innerWidth / w, window.innerHeight / h);
-  el.style.transform = "scale(" + s + ")";
+function fit(el,w,h){
+  const s=Math.min(innerWidth/w,innerHeight/h);
+  el.style.transform=`scale(${s})`;
 }
-
 const app=document.getElementById("app");
 const modalCanvas=document.getElementById("modalCanvas");
 addEventListener("resize",()=>{fit(app,360,640);fit(modalCanvas,360,640);});
@@ -537,7 +585,7 @@ let selectedCard=null;
 function openPlayerCard(card, hasChoice){
   selectedCard=card;
   modalCard.className = `card-large color-${card.color}`;
-  modalCard.innerHTML=createCardHTML(card);
+  modalCard.innerHTML = createCardHTML(card);
   modalButtons.innerHTML="";
 
   if(hasChoice){
@@ -551,8 +599,9 @@ function openPlayerCard(card, hasChoice){
   cardModal.style.display="flex";
 }
 
-function openEnemyCard(l,d){
-  modalCard.innerHTML=createCardHTML({level:l,damage:d});
+function openEnemyCard(card){
+  modalCard.className = `card-large color-${card.color}`;
+  modalCard.innerHTML = createCardHTML(card);
   modalButtons.innerHTML="";
   addClose();
   cardModal.style.display="flex";
@@ -572,28 +621,41 @@ function addClose(){
   b.onclick=()=>cardModal.style.display="none";
   modalButtons.appendChild(b);
 }
+  /* ===== デッキモーダルを開く ===== */
+  
+  function openDeckModal() {
+  const deckList = document.getElementById("deckList");
+  deckList.innerHTML = "";
 
-function createCardHTML(c){
-  return `
-    <div class="card-inner">
-      <div class="card-header">
-        <div class="level">
-          <span>Lv.</span><strong>${c.level}</strong>
-        </div>
-        <div class="card-name">${c.name ?? ""}</div>
-      </div>
+  playerDeck.forEach(card => {
+    const div = document.createElement("div");
+    div.className = `card color-${card.color}`;
+    div.innerHTML = createCardHTML(card);
 
-      <div class="card-image">
-        ${c.picture ?? ""}
-      </div>
+    // クリックで拡大モーダル
+    div.onclick = () => {
+      modalCard.className = `card-large color-${card.color}`;
+      modalCard.innerHTML = createCardHTML(card);
+      modalButtons.innerHTML = "";
+      addClose();
+      cardModal.style.display = "flex";
+    };
 
-      <div class="card-text">
-        ${c.text ?? ""}
-      </div>
+    deckList.appendChild(div);
+  });
 
-      <div class="damage">${c.damage}</div>
-    </div>
-  `;
+  document.getElementById("deckModal").style.display = "flex";
+}
+
+function closeDeckModal() {
+  document.getElementById("deckModal").style.display = "none";
+}
+
+  
+/* ===== 画像とテキストと名前付きカード作成 ===== */
+  
+function createCardHTML(card){
+  return `<img src="${card.picture}" alt="">`;
 }
 
 /* ===== バトル ===== */
