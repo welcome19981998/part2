@@ -531,6 +531,11 @@ html, body {
 </div>
 
 <script>
+/* ===== お互いのライフを宣言 ===== */
+
+let playerLife = 10;
+let enemyLife  = 10;
+
 /* ===== 手札の配列を宣言 ===== */
 
 let playerHandCards = [];
@@ -650,12 +655,35 @@ function redrawHands(){
   });
 }
   
-/* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→墓地送り→手札補充を兼ねている===== */
-function endBattlePhase(pCard, eCard){
+/* ===== 汎用ダメージ関数 ===== */
+function applyDamage(ctx){
 
+  let dmg = ctx.card.damage;
+  if (typeof dmg !== "number") return;
+
+  ctx.defender.life -= dmg;
+  console.log("自分ライフ",playerLife,"敵のライフ",enemyLife);
+  //updateLifeUI();
+}
+
+  
+/* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→ダメージ→墓地送り→手札補充を兼ねている===== */
+function endBattlePhase(pCard, eCard){
+　const winner = judgeWinner(pCard, eCard);
+
+  const winnerPlayer = winner === "player" ? player : enemy;
+  const loserPlayer  = winner === "player" ? enemy  : player;
+  const winnerCard   = winner === "player" ? pCard  : eCard;
+
+  // ★ここで毎回 ctx を生成する
+  const ctx = {
+    attacker: winnerPlayer,
+    defender: loserPlayer,
+    card: winnerCard
+  };
   // ① 効果発動フェーズ（将来ここに処理を足す）
   // resolveCardEffects(pCard,eCard);
-
+　applyDamage(ctx);
   // ② 墓地へ送る
   moveToGrave(pCard,eCard);
 
