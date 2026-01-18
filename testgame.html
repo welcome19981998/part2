@@ -890,6 +890,10 @@ function judge(p,e){
   if((p==="red"&&e==="yellow")||(p==="yellow"&&e==="blue")||(p==="blue"&&e==="red")) return "win";
   return "lose";
 }
+  
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function startBattle(pCard,eCard){
   const layer=document.getElementById("battleLayer");
@@ -904,8 +908,8 @@ async function startBattle(pCard,eCard){
 
   p.innerHTML=createCardHTML(pCard);
   e.innerHTML=createCardHTML(eCard);
-
-  setTimeout(()=>{
+   await wait(500);
+  
     const res=judge(pCard.color,eCard.color);
     
     let winner = null;
@@ -931,7 +935,7 @@ async function startBattle(pCard,eCard){
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     // ③墓地へ送る
-  moveToGrave(pCard,eCard);
+  await moveToGrave(pCard,eCard);
 
   // ④手札補充（最大3枚まで）
   drawFromDeck(playerDeck, playerHandCards, 3);
@@ -939,7 +943,6 @@ async function startBattle(pCard,eCard){
 
   redrawHands();
     setTimeout(()=>layer.style.display="none",2000);
-  },500);
 }
 /* ===== ページを読み込んでから手札を読み込む===== */
 
