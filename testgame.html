@@ -656,19 +656,31 @@ function redrawHands(){
 }
   
 /* ===== 汎用ダメージ関数 ===== */
-function applyDamage(ctx){
 
-  let dmg = ctx.card.damage;
-  if (typeof dmg !== "number") return;
+function applyDamage(winner, winnerCard) {
 
-  ctx.defender.life -= dmg;
+  if (winner === "player") {
+    enemyLife -= Number(winnerCard.damage) || 0;
+    updateLifeDisplay();
+  }
+
+  if (winner === "enemy") {
+    playerLife -= Number(winnerCard.damage) || 0;
+    updateLifeDisplay();
+  }
   console.log("自分ライフ",playerLife,"敵のライフ",enemyLife);
-  //updateLifeUI();
 }
+  
+/* ===== 画面上のライフを更新　===== */
+function updateLifeDisplay(){
+  document.querySelector(".self-area .life").textContent  = "ライフ:" + playerLife;
+  document.querySelector(".enemy-area .life").textContent = "ライフ:" + enemyLife;
+}
+
 
   
 /* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→ダメージ→墓地送り→手札補充を兼ねている===== */
-function endBattlePhase(pCard, eCard){
+function endBattlePhase(){
 　const winner = judgeWinner(pCard, eCard);
 
   const winnerPlayer = winner === "player" ? player : enemy;
@@ -892,15 +904,37 @@ function startBattle(pCard,eCard){
 
   setTimeout(()=>{
     const res=judge(pCard.color,eCard.color);
+    
+    let winner = null;
+    if(res === "win") winner = "player";
+    else if(res === "lose") winner = "enemy";
+    else winner = "draw";
+
+    const winnerCard =
+      winner === "player" ? pCard :
+      winner === "enemy"  ? eCard : null;
+
+    const loserCard =
+      winner === "player" ? eCard :
+      winner === "enemy"  ? pCard : null;
+    
     if(res==="win"){p.classList.add("win");e.classList.add("lose");r.textContent="YOU WIN";}
     else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
     else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
     r.classList.add("show");
 
-    // 勝敗後の効果処理から墓地送り手札補充まで
-    endBattlePhase(pCard,eCard);
+    // ①勝敗後の効果処理
+    //endBattlePhase(winnerCard, loserCard, winner);
+   //②ダメージ処理
+    applyDamage(winner,winnerCard);
+    // ③墓地へ送る
+  moveToGrave(pCard,eCard);
 
-    
+  // ④手札補充（最大3枚まで）
+  drawFromDeck(playerDeck, playerHandCards, 3);
+  drawFromDeck(enemyDeck,  enemyHandCards,  3);
+
+  redrawHands();
     setTimeout(()=>layer.style.display="none",2000);
   },500);
 }
