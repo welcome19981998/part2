@@ -221,22 +221,6 @@ html, body {
   align-items: center;
   z-index: 900;
 }
-.deck-modal-content{
-  width: 360px;
-  height: 640px;
-  background: #171a2e;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:12px;
-}
-
-.deck-grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, auto);
-  gap:10px;
-}
 
 
 /* カード拡大モーダル（最前面） */
@@ -290,6 +274,12 @@ html, body {
   max-height: 90vh;
 
   overflow-y: auto;
+}
+/* デッキ確認モーダル安全に中央固定 */
+#deckModal{
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .primary { background: #4f6bff; color: #fff; }
@@ -499,10 +489,12 @@ html, body {
   
   <!-- ===== デッキ確認モーダル ===== -->
 <div class="card-modal" id="deckModal">
-  <div class="modal-canvas" id="deckCanvas">
-    <div class="deck-modal-content">
-      <div class="deck-grid" id="deckList"></div>
-      <button class="secondary" onclick="closeDeck()">閉じる</button>
+  <div class="modal-canvas">
+    <div class="card-modal-content">
+      <div class="hand" id="deckList"></div>
+      <div class="modal-buttons">
+        <button class="secondary" onclick="closeDeckModal()">閉じる</button>
+      </div>
     </div>
   </div>
 </div>
@@ -619,16 +611,6 @@ const app=document.getElementById("app");
 const modalCanvas=document.getElementById("modalCanvas");
 addEventListener("resize",()=>{fit(app,360,640);fit(modalCanvas,360,640);});
 fit(app,360,640);fit(modalCanvas,360,640);
-
-const deckModal  = document.getElementById("deckModal");
-const deckCanvas = document.getElementById("deckCanvas");
-  
-/* ===== デッキモーダルも拡大しないように ===== */
-addEventListener("resize",()=>{
-  fit(deckCanvas,360,640);
-});
-fit(deckCanvas,360,640);
-
 
 /* ===== モーダル ===== */
 const cardModal=document.getElementById("cardModal");
