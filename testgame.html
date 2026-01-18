@@ -612,6 +612,32 @@ function redrawHands(){
     enemyHand.appendChild(createCardElement(card,false));
   });
 }
+  
+/* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→墓地送り→手札補充を兼ねている===== */
+function endBattlePhase(pCard, eCard){
+
+  // ① 効果発動フェーズ（将来ここに処理を足す）
+  // resolveCardEffects(pCard,eCard);
+
+  // ② 墓地へ送る
+  moveToGrave(pCard,eCard);
+
+  // ③ 手札補充（最大3枚まで）
+  drawFromDeck(playerDeck, playerHandCards, 3);
+  drawFromDeck(enemyDeck,  enemyHandCards,  3);
+
+  redrawHands();
+}
+
+/* ===== デッキから手札が3枚になるまでカードを手札に加える ===== */
+function drawFromDeck(deck, hand, max=3){
+  if(deck.length===0) return;
+
+  while(hand.length < max && deck.length > 0){
+    hand.push(deck.pop());
+  }
+}
+
 /* =====　場に出したカードを墓地へ送る関数 ===== */
 function moveToGrave(pCard,eCard){
 
@@ -775,8 +801,10 @@ function startBattle(pCard,eCard){
     else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
     else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
     r.classList.add("show");
-    //お互いが使ったカードは墓地へ送られる
-    moveToGrave(pCard,eCard);
+
+    // 勝敗後の効果処理から墓地送り手札補充まで
+    endBattlePhase(pCard,eCard);
+
     
     setTimeout(()=>layer.style.display="none",2000);
   },500);
