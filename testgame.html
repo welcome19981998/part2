@@ -658,17 +658,19 @@ function redrawHands(){
 /* ===== 汎用ダメージ関数 ===== */
 
 function applyDamage(winner, winnerCard) {
-
+ return new Promise(resolve=>{
   if (winner === "player") {
     enemyLife -= Number(winnerCard.damage) || 0;
     updateLifeDisplay();
-  }
+   }
 
   if (winner === "enemy") {
     playerLife -= Number(winnerCard.damage) || 0;
     updateLifeDisplay();
-  }
+   }
   console.log("自分ライフ",playerLife,"敵のライフ",enemyLife);
+  resolve();
+ }
 }
   
 /* ===== 画面上のライフを更新　===== */
@@ -679,7 +681,7 @@ function updateLifeDisplay(){
 
 
   
-/* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→ダメージ→墓地送り→手札補充を兼ねている===== */
+/* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→ダメージ→墓地送り→手札補充を兼ねている
 function endBattlePhase(){
 　const winner = judgeWinner(pCard, eCard);
 
@@ -705,6 +707,7 @@ function endBattlePhase(){
 
   redrawHands();
 }
+===== */
 
 /* ===== デッキから手札が3枚になるまでカードを手札に加える ===== */
 function drawFromDeck(deck, hand, max=3){
@@ -717,7 +720,7 @@ function drawFromDeck(deck, hand, max=3){
 
 /* =====　場に出したカードを墓地へ送る関数 ===== */
 function moveToGrave(pCard,eCard){
-
+ return new Promise(resolve=>setTimeout(resolve,1000));
   // 墓地へ
   playerGrave.push(pCard);
   enemyGrave.push(eCard);
@@ -888,7 +891,7 @@ function judge(p,e){
   return "lose";
 }
 
-function startBattle(pCard,eCard){
+async function startBattle(pCard,eCard){
   const layer=document.getElementById("battleLayer");
   const p=document.getElementById("playerBattle");
   const e=document.getElementById("enemyBattle");
@@ -926,7 +929,7 @@ function startBattle(pCard,eCard){
     // ①勝敗後の効果処理
     //endBattlePhase(winnerCard, loserCard, winner);
    //②ダメージ処理
-    applyDamage(winner,winnerCard);
+  await applyDamage(winner,winnerCard);
     // ③墓地へ送る
   moveToGrave(pCard,eCard);
 
