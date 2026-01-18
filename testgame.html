@@ -221,7 +221,10 @@ html, body {
   align-items: center;
   z-index: 900;
 }
-
+/* 墓地はデッキと同じ階層に下げる */
+#graveModal{
+  z-index: 900;
+}
 /* カード拡大モーダル（最前面） */
 #cardModal{
   z-index: 2000;
@@ -272,6 +275,21 @@ html, body {
   width: min(92vw, 520px);
   max-height: 90vh;
 
+  overflow-y: auto;
+}
+/* 墓地一覧も4×3固定 */
+#graveModal .hand{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: auto;
+  gap: 12px;
+  justify-items: center;
+}
+
+/* モーダル全体を画面内に */
+#graveModal .modal-canvas{
+  width: min(92vw, 520px);
+  max-height: 90vh;
   overflow-y: auto;
 }
 
