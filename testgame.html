@@ -505,6 +505,11 @@ html, body {
 let playerHandCards = [];
 let enemyHandCards  = [];
 
+/* ===== 墓地の配列を宣言 ===== */
+  
+let playerGrave = [];
+let enemyGrave  = [];
+
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
   { level: -2, damage: "?", color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
@@ -591,8 +596,35 @@ function setupInitialHands() {
   }
 }
 
+/* ===== 手札UIを再描画する ===== */
+function redrawHands(){
+  const playerHand = document.querySelector(".self-area .hand");
+  const enemyHand  = document.querySelector(".enemy-area .hand");
 
+  playerHand.innerHTML = "";
+  enemyHand.innerHTML  = "";
 
+  playerHandCards.forEach(card=>{
+    playerHand.appendChild(createCardElement(card,true));
+  });
+
+  enemyHandCards.forEach(card=>{
+    enemyHand.appendChild(createCardElement(card,false));
+  });
+}
+/* =====　場に出したカードを墓地へ送る関数 ===== */
+function moveToGrave(pCard,eCard){
+
+  // 墓地へ
+  playerGrave.push(pCard);
+  enemyGrave.push(eCard);
+
+  // 手札から削除（参照一致で消す）
+  playerHandCards = playerHandCards.filter(c=>c!==pCard);
+  enemyHandCards  = enemyHandCards.filter(c=>c!==eCard);
+
+  redrawHands();
+}
 
 /* ===== スケール ===== */
 function fit(el,w,h){
@@ -743,6 +775,9 @@ function startBattle(pCard,eCard){
     else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
     else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
     r.classList.add("show");
+    //お互いが使ったカードは墓地へ送られる
+    moveToGrave(pCard,eCard);
+    
     setTimeout(()=>layer.style.display="none",2000);
   },500);
 }
