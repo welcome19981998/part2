@@ -423,8 +423,8 @@ html, body {
     <div class="player-area enemy-area">
       <div class="zone-column">
         <div class="life">ライフ:10</div>
-        <div class="zone">墓地</div>
         <div class="zone">デッキ<br>15</div>
+        <div class="zone" onclick="openGraveModal(false)">墓地</div>
       </div>
       <div class="hand">
         <div class="card" onclick="openEnemyCard(2,3)">
@@ -461,7 +461,7 @@ html, body {
         </div>
       </div>
       <div class="zone-column">
-        <div class="zone">墓地</div>
+        <div class="zone" onclick="openGraveModal(true)">墓地</div>
         <div class="zone" onclick="openDeckModal()">デッキ<br>15</div>
         <div class="life">ライフ:10</div>
       </div>
@@ -491,6 +491,19 @@ html, body {
     </div>
   </div>
 </div>
+  
+  <!-- ===== 墓地確認モーダル ===== -->
+<div class="card-modal" id="graveModal">
+  <div class="modal-canvas">
+    <div class="card-modal-content">
+      <div class="hand" id="graveList"></div>
+      <div class="modal-buttons">
+        <button class="secondary" onclick="closeGraveModal()">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- ===== バトル演出 ===== -->
 <div class="battle-cards" id="battleLayer">
@@ -747,6 +760,36 @@ function addClose(){
 
 function closeDeckModal() {
   document.getElementById("deckModal").style.display = "none";
+}
+  
+/* ===== 墓地確認モーダルを開く（自分・相手両方対応） ===== */
+function openGraveModal(isPlayer){
+  const graveList = document.getElementById("graveList");
+  graveList.innerHTML = "";
+
+  const targetGrave = isPlayer ? playerGrave : enemyGrave;
+
+  targetGrave.forEach(card=>{
+    const div = document.createElement("div");
+    div.className = `card color-${card.color}`;
+    div.innerHTML = createCardHTML(card);
+
+    div.onclick = ()=>{
+      modalCard.className = `card-large color-${card.color}`;
+      modalCard.innerHTML = createCardHTML(card);
+      modalButtons.innerHTML = "";
+      addClose();
+      cardModal.style.display = "flex";
+    };
+
+    graveList.appendChild(div);
+  });
+
+  document.getElementById("graveModal").style.display="flex";
+}
+
+function closeGraveModal(){
+  document.getElementById("graveModal").style.display="none";
 }
 
   
