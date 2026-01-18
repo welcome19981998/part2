@@ -572,9 +572,9 @@ function setupInitialHands() {
 　enemyHandCards  = [];
 
 
-  // デッキを作成　元デッキデータからコピーして作成
+  // デッキを作成　元デッキデータからコピーして中身シャッフルして作成
   playerDeck = shuffle([...PLAYER_CARD_POOL]);
-  enemyDeck  = createDeck([...ENEMY_CARD_POOL]);
+  enemyDeck  = shuffle([...ENEMY_CARD_POOL]);
 
   // 初期手札3枚
   for (let i = 0; i < 3; i++) {
