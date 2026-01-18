@@ -655,7 +655,19 @@ function addClose(){
   const deckList = document.getElementById("deckList");
   deckList.innerHTML = "";
 
-  playerDeck.forEach(card => {
+  let sortedplayerDeck = playerDeck;
+   const colorOrder = {
+   red: 0,
+   blue: 2,
+   yellow: 1
+   };
+
+  sortedplayerDeck.sort((a,b)=>{
+  return colorOrder[a.color] - colorOrder[b.color];
+  });
+
+  
+  sortedplayerDeck.forEach(card => {
     const div = document.createElement("div");
     div.className = `card color-${card.color}`;
     div.innerHTML = createCardHTML(card);
