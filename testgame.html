@@ -530,14 +530,13 @@ const ENEMY_CARD_POOL = [
   { level: 3, damage: 5, color: "red",picture:"testred.jpg" },
 ];
 
-/* ===== プレイヤーと敵のデッキを作る ===== */
-  function createDeck(pool, size) {
-  const deck = [];
-  for (let i = 0; i < size; i++) {
-    const base = pool[Math.floor(Math.random() * pool.length)];
-    deck.push({ ...base }); // コピー
+/* ===== シャッフル関数 ===== */
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
   }
-  return deck;
+  return array;
 }
 
 
@@ -573,9 +572,9 @@ function setupInitialHands() {
 　enemyHandCards  = [];
 
 
-  // デッキを作成
-  playerDeck = createDeck(PLAYER_CARD_POOL, PLAYER_CARD_POOL.length);
-  enemyDeck  = createDeck(ENEMY_CARD_POOL, ENEMY_CARD_POOL.length);
+  // デッキを作成　元デッキデータからコピーして作成
+  playerDeck = shuffle([...PLAYER_CARD_POOL]);
+  enemyDeck  = createDeck([...ENEMY_CARD_POOL]);
 
   // 初期手札3枚
   for (let i = 0; i < 3; i++) {
