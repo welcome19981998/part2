@@ -952,11 +952,11 @@ async function startBattle(pCard,eCard){
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
-  setTimeout(()=>layer.style.display="none",2000);
+  await wait(2000);
+  layer.style.display="none";
     // ③墓地へ送る
-  await wait(500);
   moveToGrave();
-　await wait(500);
+　await wait(1000);
   // ④手札補充（最大3枚まで）
   drawFromDeck(playerDeck, playerHandCards, 3);
   drawFromDeck(enemyDeck,  enemyHandCards,  3);
