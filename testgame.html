@@ -792,7 +792,7 @@ function addClose(){
   const deckList = document.getElementById("deckList");
   deckList.innerHTML = "";
 
-  let sortedplayerDeck = playerDeck;
+  const sortedplayerDeck = [...playerDeck];
    const colorOrder = {
    red: 0,
    blue: 2,
