@@ -951,6 +951,8 @@ async function startBattle(pCard,eCard){
     //endBattlePhase(winnerCard, loserCard, winner);
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
+    //③見た目場のカードを消す
+  setTimeout(()=>layer.style.display="none",2000);
     // ③墓地へ送る
   await wait(500);
   moveToGrave();
@@ -960,7 +962,6 @@ async function startBattle(pCard,eCard){
   drawFromDeck(enemyDeck,  enemyHandCards,  3);
 
   redrawHands();
-    setTimeout(()=>layer.style.display="none",2000);
 }
 /* ===== ページを読み込んでから手札を読み込む===== */
 
