@@ -895,7 +895,7 @@ function closeAndBattle(){
 //相手が選んだカード
   const enemyCard = enemyChooseRandomCard();
   if (!enemyCard) return;
-  playCard(selectedCard, isPlayer);
+  playCard(selectedCard,true);
   playCard(enemyCard,false);
 
   startBattle(playerFieldCard, enemyFieldCard);
