@@ -546,6 +546,11 @@ let enemyHandCards  = [];
 let playerGrave = [];
 let enemyGrave  = [];
 
+/* ===== 場のカードの配列を宣言 ===== */
+  
+let playerFieldCard = null;
+let enemyFieldCard  = null;
+
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
   { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
@@ -719,14 +724,13 @@ function drawFromDeck(deck, hand, max=3){
 }
 
 /* =====　場に出したカードを墓地へ送る関数 ===== */
-function moveToGrave(pCard,eCard){
-  // 墓地へ
-  playerGrave.push(pCard);
-  enemyGrave.push(eCard);
+function moveToGrave(){
+  //　場にある場合は場から墓地へ
+  if(playerFieldCard) playerGrave.push(playerFieldCard);
+  if(enemyFieldCard)  enemyGrave.push(enemyFieldCard);
 
-  // 手札から削除（参照一致で消す）
-  playerHandCards = playerHandCards.filter(c=>c!==pCard);
-  enemyHandCards  = enemyHandCards.filter(c=>c!==eCard);
+  playerFieldCard = null;
+  enemyFieldCard  = null;
 
   redrawHands();
 }
@@ -873,14 +877,28 @@ function enemyChooseRandomCard() {
   const index = Math.floor(Math.random() * enemyHandCards.length);
   return enemyHandCards[index];
 }
-//敵が選んだカードが使われる
+  //場にカードを出す処理　closeAndBattleで自動で使われる
+  function playCard(card, isPlayer){
+  if(isPlayer){
+    playerFieldCard = card;
+    playerHandCards = playerHandCards.filter(c => c !== card);
+  }else{
+    enemyFieldCard = card;
+    enemyHandCards = enemyHandCards.filter(c => c !== card);
+  }
+  redrawHands();
+}
+
+//敵が選んだカードが使われる　ここで手札から場に移動
 function closeAndBattle(){
   cardModal.style.display = "none";
-
+//相手が選んだカード
   const enemyCard = enemyChooseRandomCard();
   if (!enemyCard) return;
+  playCard(selectedCard, isPlayer);
+  playCard(enemyCard,false);
 
-  startBattle(selectedCard, enemyCard);
+  startBattle(playerFieldCard, enemyFieldCard);
 }
 
 
@@ -935,7 +953,7 @@ async function startBattle(pCard,eCard){
   await applyDamage(winner,winnerCard);
     // ③墓地へ送る
   await wait(500);
-  moveToGrave(pCard,eCard);
+  moveToGrave();
 　await wait(500);
   // ④手札補充（最大3枚まで）
   drawFromDeck(playerDeck, playerHandCards, 3);
