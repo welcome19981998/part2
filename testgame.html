@@ -664,13 +664,13 @@ function redrawHands(){
 
 function applyDamage(winner, winnerCard) {
  return new Promise(resolve=>{
-  if (winner === "player") {
+  if (winner === player) {
     enemyLife -= Number(winnerCard.damage) || 0;
     enemyLife -= buff; //追加ダメージ
     updateLifeDisplay();
    }
 
-  if (winner === "enemy") {
+  if (winner === enemy) {
     playerLife -= Number(winnerCard.damage) || 0;
     playerLife -= buff; //追加ダメージ
     updateLifeDisplay();
@@ -965,17 +965,17 @@ async function startBattle(pCard,eCard){
     
     let winner = null;
     let loser = null;
-    if(res === "win") {winner = "player"; loser = "enemy";}
-    else if(res === "lose") {winner = "enemy";loser = "player";}
+    if(res === "win") {winner = player; loser = enemy;}
+    else if(res === "lose") {winner = enemy;loser = player;}
     else {winner = "draw";}
 
     const winnerCard =
-      winner === "player" ? pCard :
-      winner === "enemy"  ? eCard : null;
+      winner === player ? pCard :
+      winner === enemy  ? eCard : null;
 
     const loserCard =
-      winner === "player" ? eCard :
-      winner === "enemy"  ? pCard : null;
+      winner === player ? eCard :
+      winner === enemy  ? pCard : null;
     
     if(res==="win"){p.classList.add("win");e.classList.add("lose");r.textContent="YOU WIN";}
     else if(res==="lose"){p.classList.add("lose");e.classList.add("win");r.textContent="YOU LOSE";}
