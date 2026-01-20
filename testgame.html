@@ -664,16 +664,20 @@ function redrawHands(){
 
 function applyDamage(winner, winnerCard) {
  return new Promise(resolve=>{
+   -= buff;
   if (winner === "player") {
     enemyLife -= Number(winnerCard.damage) || 0;
+    enemyLife -= buff; //追加ダメージ
     updateLifeDisplay();
    }
 
   if (winner === "enemy") {
     playerLife -= Number(winnerCard.damage) || 0;
+    playerLife -= buff; //追加ダメージ
     updateLifeDisplay();
    }
   console.log("自分ライフ",playerLife,"敵のライフ",enemyLife);
+  buff=0; //バフを初期化
   resolve();
  });
 }
@@ -684,42 +688,73 @@ function updateLifeDisplay(){
   document.querySelector(".enemy-area .life").textContent = "ライフ:" + enemyLife;
 }
 
-
-  
-/* ===== 勝敗後の効果のフローを関数化　各カードの効果発動→ダメージ→墓地送り→手札補充を兼ねている
-function endBattlePhase(){
-　const winner = judgeWinner(pCard, eCard);
-
-  const winnerPlayer = winner === "player" ? player : enemy;
-  const loserPlayer  = winner === "player" ? enemy  : player;
-  const winnerCard   = winner === "player" ? pCard  : eCard;
-
-  // ★ここで毎回 ctx を生成する
-  const ctx = {
-    attacker: winnerPlayer,
-    defender: loserPlayer,
-    card: winnerCard
-  };
-  // ① 効果発動フェーズ（将来ここに処理を足す）
-  // resolveCardEffects(pCard,eCard);
-　applyDamage(ctx);
-  // ② 墓地へ送る
-  moveToGrave(pCard,eCard);
-
-  // ③ 手札補充（最大3枚まで）
-  drawFromDeck(playerDeck, playerHandCards, 3);
-  drawFromDeck(enemyDeck,  enemyHandCards,  3);
-
-  redrawHands();
-}
-===== */
-
 /* ===== デッキから手札が3枚になるまでカードを手札に加える ===== */
 function drawFromDeck(deck, hand, max=3){
   if(deck.length===0) return;
 
   while(hand.length < max && deck.length > 0){
     hand.push(deck.pop());
+  }
+}
+  /* =====　カードの効果を発動する関数 ===== */
+
+async function resolveCardEffects(card, owner, opponent){
+  if(!card.effect) return;
+
+  for(const eff of card.effect){
+    await runEffect(eff, card, owner, opponent);
+  }
+}
+/* =====　グローバル定数 ===== */
+const player = {
+  hand: playerHandCards,
+  deck: playerDeck,
+  grave: playerGrave,
+  get life(){ return playerLife },
+  set life(v){ playerLife=v }
+};
+
+const enemy = {
+  hand: enemyHandCards,
+  deck: enemyDeck,
+  grave: enemyGrave,
+  get life(){ return enemyLife },
+  set life(v){ enemyLife=v }
+};
+let buff = 0;
+
+
+  /* =====　カードの効果を実際に発動する関数 ===== */
+
+async function runEffect(eff, card, owner, opponent){
+
+  switch(eff.type){
+
+    case "damage_by_color":
+      const count = owner.hand.filter(c=>c.color===eff.color && c!==card).length;
+      const dmg = count * eff.multiplier;
+      buff = dmg;
+      break;
+
+    case "discard_all":
+      opponent.grave.push(...opponent.hand);
+      opponent.hand.length = 0;
+      redrawHands();
+      await wait(400);
+      break;
+
+    case "grave_to_deck":
+      const revived = owner.grave.splice(0, eff.count);
+      owner.deck.push(...revived);
+      await wait(400);
+      break;
+
+    case "hand_discard_select":
+      const target = await chooseOpponentHand(opponent.hand);
+      opponent.grave.push(target);
+      opponent.hand = opponent.hand.filter(c=>c!==target);
+      redrawHands();
+      break;
   }
 }
 
@@ -930,9 +965,10 @@ async function startBattle(pCard,eCard){
     const res=judge(pCard.color,eCard.color);
     
     let winner = null;
-    if(res === "win") winner = "player";
-    else if(res === "lose") winner = "enemy";
-    else winner = "draw";
+    let loser = null;
+    if(res === "win") {winner = "player"; loser = "enemy";}
+    else if(res === "lose") {winner = "enemy";loser = "player";}
+    else {winner = "draw";}
 
     const winnerCard =
       winner === "player" ? pCard :
@@ -948,7 +984,7 @@ async function startBattle(pCard,eCard){
     r.classList.add("show");
 
     // ①勝敗後の効果処理
-    //endBattlePhase(winnerCard, loserCard, winner);
+   await resolveCardEffects(winnerCard, winner, loser);
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
