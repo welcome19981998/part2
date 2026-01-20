@@ -555,14 +555,14 @@ let enemyFieldCard  = null;
 const PLAYER_CARD_POOL = [
   { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
   { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
-  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
-  { level: 1, damage: 0, color: "blue",picture:"testblue.jpg" },
+  { level: 3, damage: 2, color: "blue",picture:"twinbomb.jpg" },
+  { level: 3, damage: 2, color: "blue",picture:"twinbomb.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
   { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
   { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
   { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
-  { level: 1, damage: 0, color: "blue",picture:"testblue.jpg" },
+  { level: 3, damage: 2, color: "blue",picture:"twinbomb.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
 ];
@@ -570,7 +570,7 @@ const PLAYER_CARD_POOL = [
 const ENEMY_CARD_POOL = [
   { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
   { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
-  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
+  { level: 3, damage: 2, color: "blue",picture:"twinbomb.jpg" },
   { level: 1, damage: 0, color: "blue",picture:"testblue.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
@@ -982,8 +982,8 @@ async function startBattle(pCard,eCard){
     else{p.classList.add("draw");e.classList.add("draw");r.textContent="DRAW";}
     r.classList.add("show");
 
-    // ①勝敗後の効果処理
-   await resolveCardEffects(winnerCard, winner, loser);
+    // ①勝敗後の効果処理 引き分け以外の場合
+  if(winner != "draw"){await resolveCardEffects(winnerCard, winner, loser);}
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
