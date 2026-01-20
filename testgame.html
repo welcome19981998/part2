@@ -664,7 +664,6 @@ function redrawHands(){
 
 function applyDamage(winner, winnerCard) {
  return new Promise(resolve=>{
-   -= buff;
   if (winner === "player") {
     enemyLife -= Number(winnerCard.damage) || 0;
     enemyLife -= buff; //追加ダメージ
