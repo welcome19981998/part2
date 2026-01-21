@@ -914,13 +914,9 @@ function enemyChooseRandomCard() {
 }
   //場にカードを出す処理　closeAndBattleで自動で使われる
   function playCard(card, isPlayer){
-  if(isPlayer){
-    playerFieldCard = card;
-    playerHandCards = playerHandCards.filter(c => c !== card);
-  }else{
-    enemyFieldCard = card;
-    enemyHandCards = enemyHandCards.filter(c => c !== card);
-  }
+  const hand = isPlayer ? playerHandCards : enemyHandCards;
+  const index = hand.indexOf(card);
+  if(index !== -1) hand.splice(index, 1);
   redrawHands();
 }
 
