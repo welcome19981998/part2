@@ -619,9 +619,10 @@ function setupInitialHands() {
   playerHand.innerHTML = "";
   enemyHand.innerHTML = "";
 
-  // 追加　手札の配列
-  playerHandCards = [];
-　enemyHandCards  = [];
+  // 追加　手札の配列 初期化
+  playerHandCards.length = 0;
+  enemyHandCards.length = 0;
+
 
 
   // デッキを作成　元デッキデータからコピーして中身シャッフルして作成
