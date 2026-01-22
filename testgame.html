@@ -551,16 +551,60 @@ let enemyGrave  = [];
 let playerFieldCard = null;
 let enemyFieldCard  = null;
 
+/* ===== カラーラベルを宣言 ===== */
+const COLOR_LABEL = {
+  red: "赤",
+  blue: "青",
+  yellow: "黄"
+};
+
+
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
-  { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
-  { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
+  {
+  level: 3,
+  color: "yellow",
+  picture: "testyellow.jpg",
+
+  choice: {
+    red:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
+    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
+   }
+  }
+  {
+  level: 3,
+  color: "yellow",
+  picture: "testyellow.jpg",
+
+  choice: {
+    red:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
+    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
+   }
+  }
+  {
+  level: 3,
+  color: "yellow",
+  picture: "testyellow.jpg",
+
+  choice: {
+    red:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
+    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
+   }
+  }
   { level: 3, damage: 2, color: "blue", effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
-  { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
-  { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
+  {
+  level: 3,
+  color: "yellow",
+  picture: "testyellow.jpg",
+
+  choice: {
+    red:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
+    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
+   }
+  }
   { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
@@ -791,12 +835,20 @@ function openPlayerCard(card, hasChoice){
   modalCard.className = `card-large color-${card.color}`;
   modalCard.innerHTML = createCardHTML(card);
   modalButtons.innerHTML="";
-
-  if(hasChoice){
-    ["red","blue"].forEach(c=>{
-      addBtn(c+"として出す",()=>{card.color=c;closeAndBattle();});
-    });
-  }else{
+  
+  if(card.choice){
+  Object.keys(card.choice).forEach(color=>{
+    addBtn(
+      `${COLOR_LABEL[color]}として出す`,
+      ()=>{
+        Object.assign(card, card.choice[color]);
+        delete card.choice;
+        closeAndBattle();
+      }
+    );
+  });
+}
+else{
     addBtn("場に出す",closeAndBattle);
   }
   addClose();
