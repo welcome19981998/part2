@@ -985,7 +985,8 @@ function enemyChooseRandomCard() {
   if (enemyHandCards[index].choice){
   const colors = Object.keys(card.choice);
   const chosenColor =
-    colors[Math.floor(Math.random() * colors.length)];}
+    colors[Math.floor(Math.random() * colors.length)];
+  　Object.assign(card, card.choice[chosenColor]);}
   //色選択のために追加したおわり
   return enemyHandCards[index];
 }
