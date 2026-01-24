@@ -903,22 +903,24 @@ function openPlayerCard(card, hasChoice){
   modalCard.className = `card-large color-${card.color}`;
   modalCard.innerHTML = createCardHTML(card);
   modalButtons.innerHTML="";
-  
-  if(card.choice){
-  Object.keys(card.choice).forEach(color=>{
-    addBtn(
-      `${COLOR_LABEL[color]}として出す`,
-      ()=>{
+//選択フェーズ中は場に出せない
+  if (!selectingState){
+   if(card.choice){
+   Object.keys(card.choice).forEach(color=>{
+     addBtn(
+       `${COLOR_LABEL[color]}として出す`,
+       ()=>{
         Object.assign(card, card.choice[color]);
         delete card.choice;
         closeAndBattle();
-      }
-    );
-  });
-}
-else{
-    addBtn("場に出す",closeAndBattle);
-  }
+       　}
+     　);
+   　});
+  　}
+  　else{
+    　addBtn("場に出す",closeAndBattle);
+   　}
+ }
   addClose();
   cardModal.style.display="flex";
 }
@@ -1131,7 +1133,10 @@ async function startBattle(pCard,eCard){
     r.classList.add("show");
 
     // ①勝敗後の効果処理 引き分け以外の場合
-  if(winner != "draw"){await resolveCardEffects(winnerCard, winner, loser);}
+  if(winner != "draw"){
+    //カード選択系に入る前にレイヤー閉じる
+    layer.style.display = "none";
+   　await resolveCardEffects(winnerCard, winner, loser);}
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
