@@ -521,8 +521,17 @@ html, body {
     </div>
   </div>
 </div>
-
-
+  
+<!-- ===== 効果確認モーダル ===== -->
+<div id="effectModal" class="modal">
+  <div class="modal-content">
+    <p id="effectText"></p>
+    <div class="modal-buttons">
+      <button id="effectOk">OK</button>
+    </div>
+  </div>
+</div>
+  
 <!-- ===== バトル演出 ===== -->
 <div class="battle-cards" id="battleLayer">
   <div class="battle-card" id="playerBattle"></div>
@@ -769,6 +778,7 @@ async function resolveCardEffects(card, owner, opponent){
 }
 /* =====　グローバル定数 ===== */
 const player = {
+  name: "自分",
   hand: playerHandCards,
   deck: playerDeck,
   grave: playerGrave,
@@ -777,6 +787,7 @@ const player = {
 };
 
 const enemy = {
+  name: "相手",
   hand: enemyHandCards,
   deck: enemyDeck,
   grave: enemyGrave,
@@ -799,6 +810,10 @@ async function runEffect(eff, card, owner, opponent){
       break;
 
     case "discard_all":
+      await showEffectModal(`
+      ${opponent.name}の手札は
+      全て墓地へ送られます
+      `);
       opponent.grave.push(...opponent.hand);
       opponent.hand.length = 0;
       redrawHands();
@@ -961,6 +976,24 @@ function openGraveModal(isPlayer){
   });
 
   document.getElementById("graveModal").style.display="flex";
+}
+
+/* ===== 効果確認モーダルを開く　OK押すまで進まない（自分・相手両方対応） ===== */
+function showEffectModal(text){
+  return new Promise(resolve => {
+    const modal = document.getElementById("effectModal");
+    const effectText = document.getElementById("effectText");
+    const okBtn = document.getElementById("effectOk");
+
+    effectText.textContent = text;
+    effectText.innerHTML = text.replace(/\n/g, "<br>");
+    modal.style.display = "flex";
+
+    okBtn.onclick = () => {
+      modal.style.display = "none";
+      resolve();
+    };
+  });
 }
 
 function closeGraveModal(){
