@@ -335,7 +335,13 @@ html, body {
   bottom: 6px;
   right: 6px;
 }
+#battleLayer {
+  pointer-events: auto;
+}
 
+#battleLayer.selecting {
+  pointer-events: none;
+}
 
 .win {
   transform: scale(1.15);
@@ -1177,7 +1183,9 @@ function selectCards({ owner, zone, filter, max }) {
 }
 /* ===== 手札選択に必要な2つの関数===== */
   function enterSelectMode(owner) {
-  const handEl =
+    document.getElementById("battleLayer")
+    .classList.add("selecting");
+    const handEl =
     owner === player
       ? document.querySelector(".self-area .hand")
       : document.querySelector(".enemy-area .hand");
@@ -1186,6 +1194,8 @@ function selectCards({ owner, zone, filter, max }) {
 }
 
 function exitSelectMode() {
+  document.getElementById("battleLayer")
+    .classList.remove("selecting");
   document
     .querySelectorAll(".hand.selecting")
     .forEach(el => el.classList.remove("selecting"));
