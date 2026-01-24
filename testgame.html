@@ -814,6 +814,7 @@ async function runEffect(eff, card, owner, opponent){
       break;
 
     case "discard_all":
+      await wait(3000);
       await showEffectModal(`
       ${opponent.name}の手札は
       全て墓地へ送られます
