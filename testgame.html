@@ -867,19 +867,34 @@ async function runEffect(eff, card, owner, opponent){
       await wait(400);
       break;
 
-    case "hand_discard_select":
-     const targets = await selectCards({
-     owner: opponent,
-     zone: "hand",
-     filter: c => true,
-     max: 1
-     });
-     const index = opponent.hand.indexOf(targets);
-     if (index === -1) return;
-     hand.splice(index, 1);   // ← 手札から「その実体」を消す
-     grave.push(targets);     // ← 同じ参照を墓地へ
-     redrawHands();
-     break;
+    case "hand_discard_select": {
+      await wait(1500);
+      await showEffectModal(`
+      ${owner.name}が{opponent.name}の手札を
+      1枚選んで墓地へ送ります
+      `);
+  　　const targets = await selectCards({
+    　owner: opponent,
+    　zone: "hand",
+    　filter: c => true,
+    　max: 1
+  　　});
+
+  　　if (targets.length === 0) return;
+
+  　　const card = targets[0]; // ← ここが重要 targetsは配列だから
+  　　const hand = opponent.hand;
+  　　const grave = opponent.grave;
+
+  　　const index = hand.indexOf(card);
+  　　if (index === -1) return;
+
+  　　hand.splice(index, 1); // 実体を削除
+  　　grave.push(card);      // 同じ参照を移動
+　　　redrawHands();
+  　　break;
+　　}
+
    }
 }
 
