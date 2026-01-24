@@ -233,6 +233,13 @@ html, body {
 #effectModal {
   z-index: 10000;
 }
+/* 効果で選択時の手札はちょっと前 */
+.hand.selecting {
+  position: relative;
+  z-index: 9001; /* battleLayer(800)より上 */
+  pointer-events: auto;
+}
+
   
 .modal-canvas {
   width: 360px;
@@ -309,7 +316,7 @@ html, body {
   justify-content: center;
   align-items: center;
   gap: 40px;
-  z-index: 8000;
+  z-index: 800;
 }
 
 .battle-card {
@@ -1133,10 +1140,7 @@ async function startBattle(pCard,eCard){
     r.classList.add("show");
 
     // ①勝敗後の効果処理 引き分け以外の場合
-  if(winner != "draw"){
-    //カード選択系に入る前にレイヤー閉じる
-    layer.style.display = "none";
-   　await resolveCardEffects(winnerCard, winner, loser);}
+  if(winner != "draw"){await resolveCardEffects(winnerCard, winner, loser);}
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
@@ -1166,11 +1170,27 @@ function selectCards({ owner, zone, filter, max }) {
     };
 
     // 既存モーダルを開くだけ
-    if (zone === "hand") redrawHands();
+    if (zone === "hand") redrawHands();enterSelectMode(owner);
     if (zone === "grave") openGraveModal(owner === player);
     if (zone === "deck") openDeckModal();
   });
 }
+/* ===== 手札選択に必要な2つの関数===== */
+  function enterSelectMode(owner) {
+  const handEl =
+    owner === player
+      ? document.querySelector(".self-area .hand")
+      : document.querySelector(".enemy-area .hand");
+
+  handEl.classList.add("selecting");
+}
+
+function exitSelectMode() {
+  document
+    .querySelectorAll(".hand.selecting")
+    .forEach(el => el.classList.remove("selecting"));
+}
+
 /* ===== カードを拡大して選択するか選ぶ関数===== */
 function openSelectCard(card) {
   modalCard.className = `card-large color-${card.color}`;
@@ -1209,7 +1229,7 @@ function toggleSelect(card) {
 function finishSelect() {
   const { selected, resolve } = selectingState;
   selectingState = null;
-
+  exitSelectMode();　
   closeGraveModal();
   closeDeckModal();
   cardModal.style.display = "none";
