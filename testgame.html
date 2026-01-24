@@ -574,15 +574,6 @@ const COLOR_LABEL = {
 };
 /* ===== 効果でカード選択系を宣言 ===== */
 let selectingState = null;
-selectingState = {
-  owner,        // player or enemy
-  zone,         // "hand" | "grave" | "deck"
-  filter,       // 選択可能条件
-  max,          // 選択枚数
-  selected: [], // 選択済みカード
-  resolve       // Promise解決用
-};
-
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
 const PLAYER_CARD_POOL = [
