@@ -572,6 +572,16 @@ const COLOR_LABEL = {
   one: "①",
   two: "②",
 };
+/* ===== 効果でカード選択系を宣言 ===== */
+let selectingState = null;
+selectingState = {
+  owner,        // player or enemy
+  zone,         // "hand" | "grave" | "deck"
+  filter,       // 選択可能条件
+  max,          // 選択枚数
+  selected: [], // 選択済みカード
+  resolve       // Promise解決用
+};
 
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
@@ -681,21 +691,24 @@ function shuffle(array){
 let playerDeck = [];
 let enemyDeck = [];
   
-/* ===== 初期手札を作る　カードを初期化して作り直す ===== */
+/* ===== 初期手札を作る　カードを初期化して作り直す 効果選択用にも対応 ===== */
 
 function createCardElement(card, isPlayer) {
   const div = document.createElement("div");
   div.className = `card color-${card.color}`;
+  div.innerHTML = createCardHTML(card);
 
-div.innerHTML = createCardHTML(card);
+  div.onclick = () => {
+    if (selectingState) {
+      openSelectCard(card);
+    } else {
+      isPlayer ? openPlayerCard(card, false) : openEnemyCard(card);
+    }
+  };
 
-  if (isPlayer) {
-    div.onclick = () => openPlayerCard(card, false);
-  } else {
-    div.onclick = () => openEnemyCard(card);
-  }
   return div;
 }
+
 /* ===== 初期手札を作る　自分と敵の手札をデッキから3枚になるまでカード追加 ===== */
 
 function setupInitialHands() {
@@ -843,11 +856,18 @@ async function runEffect(eff, card, owner, opponent){
       break;
 
     case "hand_discard_select":
-      const target = await chooseOpponentHand(opponent.hand);
-      opponent.grave.push(target);
-      opponent.hand = opponent.hand.filter(c=>c!==target);
-      redrawHands();
-      break;
+     const targets = await selectCards({
+     owner: opponent,
+     zone: "hand",
+     filter: c => true,
+     max: 1
+     });
+
+     opponent.grave.push(...targets);
+     opponent.hand = opponent.hand.filter(c => !targets.includes(c));
+     redrawHands();
+     break;
+
   }
 }
 
@@ -1127,6 +1147,73 @@ async function startBattle(pCard,eCard){
 
   redrawHands();
 }
+
+
+/* ===== 効果でカードを選択する専用関数===== */
+function selectCards({ owner, zone, filter, max }) {
+  return new Promise(resolve => {
+    selectingState = {
+      owner,
+      zone,
+      filter,
+      max,
+      selected: [],
+      resolve
+    };
+
+    // 既存モーダルを開くだけ
+    if (zone === "hand") redrawHands();
+    if (zone === "grave") openGraveModal(owner === player);
+    if (zone === "deck") openDeckModal();
+  });
+}
+/* ===== カードを拡大して選択するか選ぶ関数===== */
+function openSelectCard(card) {
+  modalCard.className = `card-large color-${card.color}`;
+  modalCard.innerHTML = createCardHTML(card);
+  modalButtons.innerHTML = "";
+
+  const isSelected = selectingState.selected.includes(card);
+
+  addBtn(
+    isSelected ? "選択を外す" : "選択する",
+    () => toggleSelect(card)
+  );
+
+  addClose();
+  cardModal.style.display = "flex";
+}
+/* ===== 選ばれたカードの確認　必要枚数超えたら自動で次へ===== */
+function toggleSelect(card) {
+  const s = selectingState;
+  const i = s.selected.indexOf(card);
+
+  if (i === -1) {
+    if (s.selected.length < s.max) s.selected.push(card);
+  } else {
+    s.selected.splice(i, 1);
+  }
+
+  // 規定枚数に達したら自動解決
+  if (s.selected.length === s.max) {
+    finishSelect();
+  }
+
+  cardModal.style.display = "none";
+}
+
+function finishSelect() {
+  const { selected, resolve } = selectingState;
+  selectingState = null;
+
+  closeGraveModal();
+  closeDeckModal();
+  cardModal.style.display = "none";
+
+  resolve(selected);
+}
+
+
 /* ===== ページを読み込んでから手札を読み込む===== */
 
 setupInitialHands();
