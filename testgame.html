@@ -225,6 +225,10 @@ html, body {
 #graveModal{
   z-index: 900;
 }
+/* 効果確認モーダルはデッキよりちょっと前 */
+#effectModal {
+  z-index: 1000;
+}
 /* カード拡大モーダル（最前面） */
 #cardModal{
   z-index: 2000;
@@ -523,8 +527,8 @@ html, body {
 </div>
   
 <!-- ===== 効果確認モーダル ===== -->
-<div id="effectModal" class="modal">
-  <div class="modal-content">
+<div class="card-modal" id="effectModal">
+  <div class="card-modal-content">
     <p id="effectText"></p>
     <div class="modal-buttons">
       <button id="effectOk">OK</button>
