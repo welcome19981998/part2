@@ -875,8 +875,11 @@ async function runEffect(eff, card, owner, opponent){
      max: 1
      });
 
-     opponent.grave.push(...targets);
-     opponent.hand = opponent.hand.filter(c => !targets.includes(c));
+     const index = opponent.hand.indexOf(targets);
+     if (index === -1) return;
+     hand.splice(index, 1);   // ← 手札から「その実体」を消す
+     grave.push(targets);     // ← 同じ参照を墓地へ
+  }
      redrawHands();
      break;
 
