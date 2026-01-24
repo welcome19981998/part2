@@ -690,13 +690,21 @@ function createCardElement(card, isPlayer) {
   div.innerHTML = createCardHTML(card);
 
   div.onclick = () => {
-    if (selectingState) {
+  if (selectingState) {
+    // ★ このカードが「選択対象か」を確認
+    if (
+      selectingState.owner.hand.includes(card) &&
+      selectingState.zone === "hand" &&
+      selectingState.filter(card)
+    ) {
       openSelectCard(card);
-    } else {
-      isPlayer ? openPlayerCard(card, false) : openEnemyCard(card);
     }
-  };
+    return;
+  }
 
+  // 通常時
+  isPlayer ? openPlayerCard(card, false) : openEnemyCard(card);
+};
   return div;
 }
 
