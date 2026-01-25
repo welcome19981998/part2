@@ -672,14 +672,14 @@ const ENEMY_CARD_POOL = [
     blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
    }
   },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
-  { level: -2, damage: 2, color: "yellow",name: "テストマン",text: "テストテキストテストテキストテストテキスト",picture:"testyellow.jpg"},
+  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
-  { level: 1, damage: 0, color: "blue",picture:"testblue.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
 ];
@@ -876,6 +876,7 @@ async function runEffect(eff, card, owner, opponent){
       1枚選んで墓地へ送ります
       `);
   　　const targets = await selectCards({
+      selector: owner,
     　owner: opponent,
     　zone: "hand",
     　filter: c => true,
@@ -1181,9 +1182,10 @@ async function startBattle(pCard,eCard){
 
 
 /* ===== 効果でカードを選択する専用関数===== */
-function selectCards({ owner, zone, filter, max }) {
+function selectCards({selector,owner, zone, filter, max }) {
   return new Promise(resolve => {
     selectingState = {
+      selector,
       owner,
       zone,
       filter,
@@ -1193,11 +1195,26 @@ function selectCards({ owner, zone, filter, max }) {
     };
 
     // 既存モーダルを開くだけ
+    if (selector === player) {
     if (zone === "hand") redrawHands();enterSelectMode(owner);
     if (zone === "grave") openGraveModal(owner === player);
     if (zone === "deck") openDeckModal();
+    }else {
+      selectCardsByEnemy({selector,owner, zone, filter, max });
+    }
   });
 }
+/* ===== 効果で相手にランダムに選択===== */
+async function selectCardsByEnemy({selector,owner, zone, filter, max }) {
+  const source = owner[zone].filter(filter);
+
+  if (source.length === 0) return [];
+
+  // 今は単純ランダム
+  const shuffled = [...source].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, max);//複数対応
+}
+
 /* ===== 手札選択に必要な2つの関数===== */
   function enterSelectMode(owner) {
     document.getElementById("battleLayer")
