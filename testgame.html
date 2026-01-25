@@ -883,8 +883,8 @@ async function runEffect(eff, card, owner, opponent){
     　max: 1
   　　});
 
-  　　if (targets.length === 0) return;
-
+  　　if (targets.length === 0) break; // ← 何も起きない
+      
   　　const card = targets[0]; // ← ここが重要 targetsは配列だから
   　　const hand = opponent.hand;
   　　const grave = opponent.grave;
@@ -1184,6 +1184,14 @@ async function startBattle(pCard,eCard){
 /* ===== 効果でカードを選択する専用関数===== */
 function selectCards({selector,owner, zone, filter, max }) {
   return new Promise(async resolve => {
+
+    const source = owner[zone].filter(filter);
+
+    // ★ ここが超重要
+    if (source.length === 0 || max === 0) {
+      resolve([]);
+      return;
+    }
 
     // 相手（AI）の場合
     if (selector === enemy) {
