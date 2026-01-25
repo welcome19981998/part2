@@ -870,7 +870,7 @@ async function runEffect(eff, card, owner, opponent){
     case "hand_discard_select": {
       await wait(1500);
       await showEffectModal(`
-      ${owner.name}が{opponent.name}の手札を
+      ${owner.name}が${opponent.name}の手札を
       1枚選んで墓地へ送ります
       `);
   　　const targets = await selectCards({
