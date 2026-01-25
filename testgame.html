@@ -1183,7 +1183,14 @@ async function startBattle(pCard,eCard){
 
 /* ===== 効果でカードを選択する専用関数===== */
 function selectCards({selector,owner, zone, filter, max }) {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
+
+    // 相手（AI）の場合
+    if (selector === enemy) {
+      const result = await selectCardsByEnemy({ owner, zone, filter, max });
+      resolve(result);
+      return;
+    }
     selectingState = {
       selector,
       owner,
@@ -1195,17 +1202,15 @@ function selectCards({selector,owner, zone, filter, max }) {
     };
 
     // 既存モーダルを開くだけ
-    if (selector === player) {
-    if (zone === "hand") redrawHands();enterSelectMode(owner);
+    
+    if (zone === "hand") {redrawHands();enterSelectMode(owner);}
     if (zone === "grave") openGraveModal(owner === player);
     if (zone === "deck") openDeckModal();
-    }else {
-      selectCardsByEnemy({selector,owner, zone, filter, max });
-    }
+    
   });
 }
 /* ===== 効果で相手にランダムに選択===== */
-async function selectCardsByEnemy({selector,owner, zone, filter, max }) {
+function selectCardsByEnemy({owner, zone, filter, max }) {
   const source = owner[zone].filter(filter);
 
   if (source.length === 0) return [];
