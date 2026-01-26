@@ -821,18 +821,18 @@ async function resolveCardEffects(card, owner, opponent){
 /* =====　グローバル定数 ===== */
 const player = {
   name: "自分",
-  hand: playerHandCards,
-  deck: playerDeck,
-  grave: playerGrave,
+  get hand(){ return playerHandCards },
+  get deck(){ return playerDeck },
+  get grave(){ return playerGrave },
   get life(){ return playerLife },
-  set life(v){ playerLife=v }
+  set life(v){ playerLife = v }
 };
 
 const enemy = {
   name: "相手",
-  hand: enemyHandCards,
-  deck: enemyDeck,
-  grave: enemyGrave,
+  get hand(){ return enemyHandCards },
+  get deck(){ return enemyDeck },
+  get grave(){ return enemyGrave },
   get life(){ return enemyLife },
   set life(v){ enemyLife=v }
 };
@@ -1042,7 +1042,9 @@ function addClose(){
       modalCard.className = `card-large color-${card.color}`;
       modalCard.innerHTML = createCardHTML(card);
       modalButtons.innerHTML = "";
-      addClose();
+      if (!selectingState && selectingState.zone === "deck") {
+       addClose();
+      }
       cardModal.style.display = "flex";
     };
 
@@ -1083,7 +1085,9 @@ function openGraveModal(isPlayer){
       modalCard.className = `card-large color-${card.color}`;
       modalCard.innerHTML = createCardHTML(card);
       modalButtons.innerHTML = "";
-      addClose();
+      if (!selectingState && selectingState.zone === "grave") {
+       addClose();
+      }
       cardModal.style.display = "flex";
     };
 
@@ -1239,6 +1243,12 @@ function selectCards({selector,owner, zone, filter, max }) {
       resolve([]);
       return;
     }
+    // ★ マックスに母数が満たない場合は全部返す
+    if (source.length <= max) {
+      resolve([...source]);
+      return;
+     }
+    
 
     // 相手（AI）の場合
     if (selector === enemy) {
