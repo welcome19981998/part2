@@ -902,15 +902,15 @@ async function runEffect(eff, card, owner, opponent){
     await wait(1500);
     await showEffectModal(`
     ${owner.name}が墓地から
-    ${effect.max}枚選んでデッキへ戻します
+    ${eff.max}枚選んでデッキへ戻します
     `);
 
     const targets = await selectCards({
      selector: owner,
      owner: owner,
      zone: "grave",
-     filter: effect.filter,
-     max: effect.max
+     filter: eff.filter,
+     max: eff.max
     });
 
     if (targets.length === 0) break;
