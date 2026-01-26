@@ -629,11 +629,11 @@ const PLAYER_CARD_POOL = [
 
   choice: {
     yellow:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
-    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
+    blue: { color:"blue", damage:2, effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" }
    }
   },
-  { level: 3, damage: 2, color: "blue", effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
+  { level: 3, damage: 2, color: "blue", effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   {
   level: 3,
@@ -672,12 +672,12 @@ const ENEMY_CARD_POOL = [
     blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
    }
   },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
-  { level: -1, damage: 2, color: "yellow",picture:"testyellow.jpg" },
+  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
   { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
@@ -897,6 +897,42 @@ async function runEffect(eff, card, owner, opponent){
 　　　redrawHands();
   　　break;
 　　}
+
+   case "gravetodeck": {
+    await wait(1500);
+    await showEffectModal(`
+    ${owner.name}が墓地から
+    ${effect.max}枚選んでデッキへ戻します
+    `);
+
+    const targets = await selectCards({
+     selector: owner,
+     owner: owner,
+     zone: "grave",
+     filter: effect.filter,
+     max: effect.max
+    });
+
+    if (targets.length === 0) break;
+
+    const deck  = owner.deck;
+    const grave = owner.grave;
+
+    for (const card of targets) {
+     const index = grave.indexOf(card);
+     if (index === -1) continue;
+
+     grave.splice(index, 1);
+     deck.push(card);
+    }
+
+  // ★ ここで一度だけシャッフル
+    shuffle(owner.deck);
+
+    redrawHands();
+   break;
+  }
+
 
    }
 }
