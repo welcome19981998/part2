@@ -1069,6 +1069,17 @@ function openGraveModal(isPlayer){
     div.innerHTML = createCardHTML(card);
 
     div.onclick = ()=>{
+      if (selectingState) {
+    // ★ このカードが「選択対象か」を確認
+    if (
+      selectingState.owner.grave.includes(card) &&
+      selectingState.zone === "grave" &&
+      selectingState.filter(card)
+    ) {
+      openSelectCard(card);
+    }
+    return;
+  }
       modalCard.className = `card-large color-${card.color}`;
       modalCard.innerHTML = createCardHTML(card);
       modalButtons.innerHTML = "";
