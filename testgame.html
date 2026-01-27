@@ -1042,9 +1042,7 @@ function addClose(){
       modalCard.className = `card-large color-${card.color}`;
       modalCard.innerHTML = createCardHTML(card);
       modalButtons.innerHTML = "";
-      if (!selectingState && selectingState.zone === "deck") {
        addClose();
-      }
       cardModal.style.display = "flex";
     };
 
@@ -1085,9 +1083,8 @@ function openGraveModal(isPlayer){
       modalCard.className = `card-large color-${card.color}`;
       modalCard.innerHTML = createCardHTML(card);
       modalButtons.innerHTML = "";
-      if (!selectingState && selectingState.zone === "grave") {
        addClose();
-      }
+      
       cardModal.style.display = "flex";
     };
 
