@@ -1054,17 +1054,9 @@ function addClose(){
   });
 
   document.getElementById("deckModal").style.display = "flex";
-    //もし選択モーダルなら閉じるボタンを非表示にする
-  if (selectingState){
-    document.getElementsByClassName("close-button").classList.add("disabled");
-  }
 }
 
 function closeDeckModal() {
-  if (document.getElementById("close-button").classList.contains("disabled")) {
-    document.getElementsByClassName("close-button").classList.remove("disabled");
-  // disabled が付いている時の処理
-}
   document.getElementById("deckModal").style.display = "none";
 }
   
@@ -1104,10 +1096,6 @@ function openGraveModal(isPlayer){
   });
 
   document.getElementById("graveModal").style.display="flex";
-  //もし選択モーダルなら閉じるボタンを非表示にする
-  if (selectingState){
-    document.getElementsByClassName("close-button").classList.add("disabled");
-  }
 }
 
 /* ===== 効果確認モーダルを開く　OK押すまで進まない（自分・相手両方対応） ===== */
@@ -1129,10 +1117,6 @@ function showEffectModal(text){
 }
 
 function closeGraveModal(){
-  if (document.getElementById("close-button").classList.contains("disabled")) {
-    document.getElementsByClassName("close-button").classList.remove("disabled");
-  // disabled が付いている時の処理
-}
   document.getElementById("graveModal").style.display="none";
 }
 
@@ -1282,7 +1266,9 @@ function selectCards({selector,owner, zone, filter, max }) {
       selected: [],
       resolve
     };
-
+    //モーダル開く前に全てのモーダルの閉じるボタンをなくす
+    document.querySelectorAll(".close-button")
+  .forEach(btn => btn.classList.add("disabled"));
     // 既存モーダルを開くだけ
     
     if (zone === "hand") {redrawHands();enterSelectMode(owner);}
@@ -1364,6 +1350,10 @@ function finishSelect() {
   closeGraveModal();
   closeDeckModal();
   cardModal.style.display = "none";
+  //モーダル閉じるボタン復活
+  document.querySelectorAll(".close-button")
+  .forEach(btn => btn.classList.remove("disabled"));
+
 
   resolve(selected);
 }
