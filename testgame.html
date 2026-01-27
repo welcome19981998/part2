@@ -907,7 +907,7 @@ async function runEffect(eff, card, owner, opponent){
     await showEffectModal(`
     ${owner.name}が墓地から
     ${eff.max}枚選んでデッキへ戻します
-    ※{eff.max}枚以下なら全て戻します
+    ※${eff.max}枚以下なら全て戻します
     `);
 
     const targets = await selectCards({
