@@ -305,6 +305,10 @@ html, body {
   max-height: 90vh;
   overflow-y: auto;
 }
+/*モーダル閉じるボタン非表示*/
+.close-button.disabled {
+  display: none;
+}
 
 .primary { background: #4f6bff; color: #fff; }
 .secondary { background: #2a2f55; color: #fff; }
@@ -523,7 +527,7 @@ html, body {
     <div class="card-modal-content">
       <div class="hand" id="deckList"></div>
       <div class="modal-buttons">
-        <button class="secondary" onclick="closeDeckModal()">閉じる</button>
+        <button class="secondary close-button" onclick="closeDeckModal()">閉じる</button>
       </div>
     </div>
   </div>
@@ -535,7 +539,7 @@ html, body {
     <div class="card-modal-content">
       <div class="hand" id="graveList"></div>
       <div class="modal-buttons">
-        <button class="secondary" onclick="closeGraveModal()">閉じる</button>
+        <button class="secondary close-button" onclick="closeGraveModal()">閉じる</button>
       </div>
     </div>
   </div>
@@ -1050,9 +1054,17 @@ function addClose(){
   });
 
   document.getElementById("deckModal").style.display = "flex";
+    //もし選択モーダルなら閉じるボタンを非表示にする
+  if (selectingState){
+    document.getElementsByClassName("close-button").classList.add("disabled");
+  }
 }
 
 function closeDeckModal() {
+  if (document.getElementById("close-button").classList.contains("disabled")) {
+    document.getElementsByClassName("close-button").classList.remove("disabled");
+  // disabled が付いている時の処理
+}
   document.getElementById("deckModal").style.display = "none";
 }
   
@@ -1092,6 +1104,10 @@ function openGraveModal(isPlayer){
   });
 
   document.getElementById("graveModal").style.display="flex";
+  //もし選択モーダルなら閉じるボタンを非表示にする
+  if (selectingState){
+    document.getElementsByClassName("close-button").classList.add("disabled");
+  }
 }
 
 /* ===== 効果確認モーダルを開く　OK押すまで進まない（自分・相手両方対応） ===== */
@@ -1113,6 +1129,10 @@ function showEffectModal(text){
 }
 
 function closeGraveModal(){
+  if (document.getElementById("close-button").classList.contains("disabled")) {
+    document.getElementsByClassName("close-button").classList.remove("disabled");
+  // disabled が付いている時の処理
+}
   document.getElementById("graveModal").style.display="none";
 }
 
