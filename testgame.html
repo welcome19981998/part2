@@ -865,7 +865,7 @@ async function runEffect(eff, card, owner, opponent){
      selector: owner,
      owner: owner,
      zone: "grave",
-     filter: FILTERS[effect.filter],
+     filter: FILTERS[eff.filter],
      max: eff.max
     });
 
