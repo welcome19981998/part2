@@ -591,6 +591,14 @@ const COLOR_LABEL = {
   one: "①",
   two: "②",
 };
+
+/* ===== カードには直接書けないフィルター関数を宣言 ===== */
+const FILTERS = {
+  any: card => true,
+  red: card => card.color === "red",
+  level3: card => card.level === 3
+};
+
 /* ===== 効果でカード選択系を宣言 ===== */
 let selectingState = null;
 
@@ -616,15 +624,15 @@ const CARD_POOL = {
     two: { damage:2, effect:[{type:"discard_all"}],picture:"testred.jpg" }
    }
   },
-  B_01rebirth:{ level: 3, damage: 2, color: "blue", effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
+  B_01rebirth:{ level: 3, damage: 2, color: "blue", effect:[{type:"gravetodeck",max: 2,filter: "any"}],picture:"2rebirth.jpg" },
   B_02discard1:{ level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   B_02discard2:{ level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
   R_test1:{ level: 2, damage: 2, color: "red",picture:"testred.jpg"},
 };
 
-const PLAYER_CARD_POOL =["B_01rebirth","B_01rebirth","B_02discard1","B_02discard1","B_02discard2","B_02discard2",
+const PLAYER_decklist =["B_01rebirth","B_01rebirth","B_02discard1","B_02discard1","B_02discard2","B_02discard2",
                          "R_test1","R_test1","R_test1","R_test1","YB_test1",];
-const ENEMY_CARD_POOL = ["R_test1","R_test1","R_test1","R_test1","YB_test1","B_01rebirth","B_01rebirth",];
+const ENEMY_decklist = ["R_test1","R_test1","R_test1","R_test1","YB_test1","B_01rebirth","B_01rebirth",];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -639,9 +647,7 @@ function createDeck(deckList) {
     structuredClone(CARD_POOL[id])
   );
 }
-  /* =====　IDからデッキの中身作る ===== */
-PLAYER_CARD_POOL = createDeck(PLAYER_CARD_POOL);
-ENEMY_CARD_POOL = createDeck(ENEMY_CARD_POOL);
+
 let playerDeck = [];
 let enemyDeck = [];
   
@@ -687,9 +693,10 @@ function setupInitialHands() {
 
 
   // デッキを作成　元デッキデータからコピーして中身シャッフルして作成
-  playerDeck = shuffle([...PLAYER_CARD_POOL]);
-  enemyDeck  = shuffle([...ENEMY_CARD_POOL]);
-
+  playerDeck = createDeck(PLAYER_decklist);
+  shuffle(playerdeck);
+  enemyDeck  = createDeck(ENEMY_decklist);
+  shuffle(enemydeck);
   // 初期手札3枚
   for (let i = 0; i < 3; i++) {
     const pCard = playerDeck.pop();
@@ -858,7 +865,7 @@ async function runEffect(eff, card, owner, opponent){
      selector: owner,
      owner: owner,
      zone: "grave",
-     filter: eff.filter,
+     filter: FILTERS[effect.filter],
      max: eff.max
     });
 
