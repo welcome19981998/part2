@@ -595,8 +595,8 @@ const COLOR_LABEL = {
 let selectingState = null;
 
   /* ===== 自分と敵のデッキのカードプール　今は固定 ===== */
-const PLAYER_CARD_POOL = [
-  {
+const CARD_POOL = {
+  YB_test1:{
   level: 3,
   color: "yellow",
   picture: "testyb.jpg",
@@ -606,7 +606,7 @@ const PLAYER_CARD_POOL = [
     blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
    }
   },
-  {
+  R_testcoice1:{
   level: 3,
   color: "red",
   picture: "testred.jpg",
@@ -616,78 +616,15 @@ const PLAYER_CARD_POOL = [
     two: { damage:2, effect:[{type:"discard_all"}],picture:"testred.jpg" }
    }
   },
-  {
-  level: 3,
-  color: "red",
-  picture: "testred.jpg",
+  B_01rebirth:{ level: 3, damage: 2, color: "blue", effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
+  B_02discard1:{ level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
+  B_02discard2:{ level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
+  R_test1{ level: 2, damage: 2, color: "red",picture:"testred.jpg"}
+};
 
-  choice: {
-    one:  { damage:4, picture: "testred.jpg"},
-    two: { damage:2, effect:[{type:"discard_all"}],picture:"testred.jpg" }
-   }
-  },
-  {
-  level: 3,
-  color: "yellow",
-  picture: "testyb.jpg",
-
-  choice: {
-    yellow:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
-    blue: { color:"blue", damage:2, effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" }
-   }
-  },
-  { level: 3, damage: 2, color: "blue", effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
-  {
-  level: 3,
-  color: "yellow",
-  picture: "testyb.jpg",
-
-  choice: {
-    yellow:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
-    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
-   }
-  },
-  { level: 0, damage: "×1", color: "blue",picture:"testblue.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
-  { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
-  { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
-];
-
-const ENEMY_CARD_POOL = [
-    {
-  level: 3,
-  color: "red",
-  picture: "testred.jpg",
-
-  choice: {
-    one:  { damage:4, picture: "testred.jpg"},
-    two: { damage:2, effect:[{type:"discard_all"}],picture:"testred.jpg" }
-   }
-  },
-    {
-  level: 3,
-  color: "yellow",
-  picture: "testyb.jpg",
-
-  choice: {
-    yellow:  { color:"yellow",  damage:4, picture: "testyellow.jpg"},
-    blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
-   }
-  },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
-  { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
-  { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"gravetodeck",max: 2,filter: card => true}],picture:"2rebirth.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
-  { level: 3, damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
-  { level: 2, damage: 2, color: "red",picture:"testred.jpg"},
-  { level: 3, damage: 2, color: "red",picture:"testred.jpg" },
-];
-
+const PLAYER_CARD_POOL =["B_01rebirth","B_01rebirth","B_02discard1","B_02discard1","B_02discard2","B_02discard2",
+                         "R_test1","R_test1","R_test1","R_test1","YB_test1",];
+const ENEMY_CARD_POOL = [];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -696,8 +633,15 @@ function shuffle(array){
   }
   return array;
 }
-
-
+/* ===== カードプールのIDでデッキ作る関数 ===== */
+function createDeck(deckList) {
+  return deckList.map(id =>
+    structuredClone(CARD_POOL[id])
+  );
+}
+  /* =====　IDからデッキの中身作る ===== */
+PLAYER_CARD_POOL = createDeck(PLAYER_CARD_POOL);
+ENEMY_CARD_POOL = createDeck(ENEMY_CARD_POOL);
 let playerDeck = [];
 let enemyDeck = [];
   
