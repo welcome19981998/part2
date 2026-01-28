@@ -694,9 +694,9 @@ function setupInitialHands() {
 
   // デッキを作成　元デッキデータからコピーして中身シャッフルして作成
   playerDeck = createDeck(PLAYER_decklist);
-  shuffle(playerdeck);
+  shuffle(playerDeck);
   enemyDeck  = createDeck(ENEMY_decklist);
-  shuffle(enemydeck);
+  shuffle(enemyDeck);
   // 初期手札3枚
   for (let i = 0; i < 3; i++) {
     const pCard = playerDeck.pop();
