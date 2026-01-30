@@ -1030,6 +1030,17 @@ function addClose(){
 
     // クリックで拡大モーダル
     div.onclick = () => {
+     if (selectingState) {
+     // ★ このカードが「選択対象か」を確認
+     if (
+      selectingState.owner.deck.includes(card) &&
+      selectingState.zone === "deck" &&
+      selectingState.filter(card)
+    ) {
+      openSelectCard(card);
+    }
+    return;
+  }
       modalCard.className = `card-large color-${card.color}`;
       modalCard.innerHTML = createCardHTML(card);
       modalButtons.innerHTML = "";
