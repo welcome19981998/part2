@@ -638,11 +638,12 @@ const CARD_POOL = {
   B_decktohand1:{ level: 3, damage: 2, color: "blue",effect:[{type:"decktohand",max: 1,card:"カード",filter: "any"}],picture:"magicd.jpg" },
   R_test1:{ level: 2, damage: 2, color: "red",picture:"testred.jpg"},
   Y_byred:{ level: 2, damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
+  Y_poison1:{level: 2, damage: 2, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"testyellow.jpg"},
 };
 
 const PLAYER_decklist =["B_01rebirth","B_01rebirth","Y_byred","B_decktohand1","Y_byred","B_02discard2",
-                         "R_test1","R_test1","R_test1","R_test1","Y_byred",];
-const ENEMY_decklist = ["R_test1","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_decktohand1","B_decktohand1",];
+                         "R_test1","Y_poison1","Y_poison1","R_test1","Y_byred",];
+const ENEMY_decklist = ["Y_poison1","Y_poison1","R_test1","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_decktohand1","B_decktohand1",];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -790,7 +791,8 @@ const player = {
   get deck(){ return playerDeck },
   get grave(){ return playerGrave },
   get life(){ return playerLife },
-  set life(v){ playerLife = v }
+  set life(v){ playerLife = v },
+  status: []
 };
 
 const enemy = {
@@ -799,7 +801,8 @@ const enemy = {
   get deck(){ return enemyDeck },
   get grave(){ return enemyGrave },
   get life(){ return enemyLife },
-  set life(v){ enemyLife=v }
+  set life(v){ enemyLife=v },
+  status: []
 };
 let buff = 0;
 
@@ -830,6 +833,13 @@ async function runEffect(eff, card, owner, opponent){
       `);
   break;
 }
+    case "turn_damage":
+     opponent.status.push({
+     type: eff.type,
+     value: eff.value,
+     source: eff.source,
+     });
+     break;
 
 
     case "discard_all":
@@ -1248,7 +1258,10 @@ async function startBattle(pCard,eCard){
     // ③墓地へ送る
   moveToGrave();
 　await wait(1000);
-  // ④手札補充（最大3枚まで）
+   // ④ターンの終了時の定数ダメージなど
+  onTurnEnd(player);
+  onTurnEnd(enemy);
+  // ⑤手札補充（最大3枚まで）
   drawFromDeck(playerDeck, playerHandCards, 3);
   drawFromDeck(enemyDeck,  enemyHandCards,  3);
 
@@ -1379,6 +1392,31 @@ function finishSelect() {
 
 
   resolve(selected);
+}
+//ターン最後の処理　ダメージなど
+async function onTurnEnd(player) {
+  player.status
+    .filter(s => s.type === "turn_damage")
+    .forEach(status => {
+      
+      showEffectModal(`
+        ${player.name}は
+        ${status.source}により
+        ${status.value}ダメージ
+      `);
+      await applyStatusDamage(player, status.value);
+    });
+}
+//定数ダメージを実際に与える関数
+function applyStatusDamage({ target, value}) {
+  return new Promise(resolve => {
+
+    // ライフ減少
+    target.life -= value;
+    updateLifeDisplay();
+
+    resolve();
+  });
 }
 
 
