@@ -591,6 +591,14 @@ const COLOR_LABEL = {
   one: "①",
   two: "②",
 };
+  /* ===== zoneラベルを宣言 ===== */
+
+const ZONE_LABEL = {
+  hand: "手札",
+  deck: "デッキ",
+  grave: "墓地",
+  field: "場"
+};
 
 /* ===== カードには直接書けないフィルター関数を宣言 ===== */
 const FILTERS = {
@@ -811,14 +819,14 @@ async function runEffect(eff, card, owner, opponent){
 　　　　const bonus = count * eff.per;
       
   　　　buff += bonus;
-
+       const zoneLabel = ZONE_LABEL[eff.zone] ?? eff.zone;// ← 墓地を墓地と文字化するため
   console.log(
-    `${targetPlayer.name}の${eff.zone}の${eff.card}$は{count}枚 → +${bonus}ダメージ`
+    `${targetPlayer.name}の${zoneLabel}の${eff.card}$は{count}枚 → +${bonus}ダメージ`
   );
 　await wait(1500);
       await showEffectModal(`
-      ${targetPlayer.name}の${eff.zone}の
-      ${eff.card}$は${count}枚 → +${bonus}ダメージ追加
+      ${targetPlayer.name}の${zoneLabel}の
+      ${eff.card}は${count}枚 → +${bonus}ダメージ追加
       `);
   break;
 }
