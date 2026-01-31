@@ -1259,8 +1259,8 @@ async function startBattle(pCard,eCard){
   moveToGrave();
 　await wait(1000);
    // ④ターンの終了時の定数ダメージなど
-  onTurnEnd(player);
-  onTurnEnd(enemy);
+  await onTurnEnd(player);
+  await onTurnEnd(enemy);
   // ⑤手札補充（最大3枚まで）
   drawFromDeck(playerDeck, playerHandCards, 3);
   drawFromDeck(enemyDeck,  enemyHandCards,  3);
@@ -1395,6 +1395,7 @@ function finishSelect() {
 }
 //ターン最後の処理　ダメージなど
 async function onTurnEnd(player) {
+ return new Promise(resolve=>{
   const statuses = player.status
     .filter(s => s.type === "turn_damage");
 
@@ -1407,6 +1408,8 @@ async function onTurnEnd(player) {
 
     await applyStatusDamage(player, status.value);
   }
+  resolve();
+ });
 }
 
 //定数ダメージを実際に与える関数
