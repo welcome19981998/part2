@@ -1395,20 +1395,22 @@ function finishSelect() {
 }
 //ターン最後の処理　ダメージなど
 async function onTurnEnd(player) {
-  player.status
-    .filter(s => s.type === "turn_damage")
-    .forEach(status => {
-      
-      showEffectModal(`
-        ${player.name}は
-        ${status.source}により
-        ${status.value}ダメージ
-      `);
-      await applyStatusDamage(player, status.value);
-    });
+  const statuses = player.status
+    .filter(s => s.type === "turn_damage");
+
+  for (const status of statuses) {
+    await showEffectModal(`
+      ${player.name}は
+      ${status.source}により
+      ${status.value}ダメージ
+    `);
+
+    await applyStatusDamage(player, status.value);
+  }
 }
+
 //定数ダメージを実際に与える関数
-function applyStatusDamage({ target, value}) {
+function applyStatusDamage(target, value){
   return new Promise(resolve => {
 
     // ライフ減少
