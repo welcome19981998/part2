@@ -1259,9 +1259,9 @@ async function startBattle(pCard,eCard){
   moveToGrave();
 　await wait(1000);
    // ④ターンの終了時の定数ダメージなど
-  onTurnEnd(player);
-  onTurnEnd(enemy);
-  await wait(500);
+  await onTurnEnd(player);
+  await onTurnEnd(enemy);
+  
   // ⑤手札補充（最大3枚まで）
   drawFromDeck(playerDeck, playerHandCards, 3);
   drawFromDeck(enemyDeck,  enemyHandCards,  3);
@@ -1407,6 +1407,7 @@ async function onTurnEnd(player) {
     `);
 
     await applyStatusDamage(player, status.value);
+    await wait(500);
   }
 }
 
