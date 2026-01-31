@@ -807,7 +807,7 @@ async function runEffect(eff, card, owner, opponent){
     　　eff.target === "self" ? owner : opponent;
 
   　　　const cards = targetPlayer[eff.zone] || [];
-  　　　const count = cards.filter(eff.filter ?? (() => true)).length;
+  　　　const count = cards.filter(FILTERS[eff.filter] ?? (() => true)).length;
 　　　　const bonus = count * eff.per;
       
   　　　buff += bonus;
