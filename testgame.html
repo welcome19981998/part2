@@ -604,6 +604,7 @@ const ZONE_LABEL = {
 const FILTERS = {
   any: card => true,
   red: card => card.color === "red",
+  blue: card => card.color === "blue",
   level3: card => card.level === 3
 };
 
@@ -640,6 +641,7 @@ const CARD_POOL = {
   R_6:{ level: 3, damage: 6, color: "red",picture:"red6.jpg"},
   Y_byred:{ level: 2, damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
   Y_poison1:{level: 2, damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
+  Y_playdamagered:{level: 2, damage: 1, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"poison.jpg"},
 };
 
 const PLAYER_decklist =["B_01rebirth","B_01rebirth","R_6","Y_poison1","Y_poison1","R_6","Y_byred",];
@@ -959,6 +961,18 @@ async function runEffect(eff, card, owner, opponent){
     redrawHands();
    break;
   }
+  //カードを出した時にダメージ
+   case "add_on_play_damage": {
+  opponent.status.push({
+    type: "on_play_damage",
+    conditionText: eff.conditionText,
+    value: eff.value,
+    source: card.name || "カードの効果",
+    condition: eff.condition,
+  });
+  break;
+}
+
 
    }
 }
@@ -1187,7 +1201,32 @@ function enemyChooseRandomCard() {
   const index = hand.indexOf(card);
   if(index !== -1) hand.splice(index, 1);
   redrawHands();
+  //定数ダメージ
+  onCardPlayed(card, isPlayer ? player : enemy);
 }
+//カードを出した時の定数ダメージの処理
+ async function onCardPlayed(playedCard, playedBy) {
+  const opponent = playedBy === player ? enemy : player;
+
+  const statuses = opponent.status.filter(s =>
+    s.type === "on_play_damage");
+
+  for (const status of statuses) {
+    const filterFn = FILTERS[status.condition];
+    if (filterFn && !filterFn(playedCard)) continue;
+
+    await showEffectModal(`
+      ${opponent.name}は
+      ${status.conditionText}
+      ${status.source}により
+      ${status.value}ダメージ
+    `);
+
+    opponent.life -= status.value;
+    updateLifeDisplay();
+  }
+}
+
 
 //敵が選んだカードが使われる　ここで手札から場に移動
 function closeAndBattle(){
