@@ -1214,7 +1214,8 @@ function enemyChooseRandomCard() {
   for (const status of statuses) {
     const filterFn = FILTERS[status.condition];
     if (filterFn && !filterFn(playedCard)) continue;
-
+    
+    await wait(500);
     await showEffectModal(`
       ${opponent.name}は
       ${status.conditionText}
