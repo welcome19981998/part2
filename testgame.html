@@ -641,11 +641,11 @@ const CARD_POOL = {
   R_6:{ level: 3, damage: 6, color: "red",picture:"red6.jpg"},
   Y_byred:{ level: 2, damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
   Y_poison1:{level: 2, damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
-  Y_playdamagered:{level: 2, damage: 1, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"poison.jpg"},
+  Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
 };
 
-const PLAYER_decklist =["B_01rebirth","B_01rebirth","R_6","Y_poison1","Y_poison1","R_6","Y_byred",];
-const ENEMY_decklist = ["Y_poison1","Y_poison1","R_6","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_decktohand1","B_decktohand1",];
+const PLAYER_decklist =["B_01rebirth","B_01rebirth","R_6","Y_poison1","Y_playblue","R_6","Y_byred",];
+const ENEMY_decklist = ["Y_poison1","Y_playblue","Y_playblue","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_decktohand1","B_decktohand1",];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
