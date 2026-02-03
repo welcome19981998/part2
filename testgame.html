@@ -1191,7 +1191,7 @@ function enemyChooseRandomCard() {
   return enemyHandCards[index];
 }
   //場にカードを出す処理　closeAndBattleで自動で使われる
-  function playCard(card, isPlayer){
+  async function playCard(card, isPlayer){
    if(isPlayer){
     playerFieldCard = card;
     }else{
@@ -1202,7 +1202,7 @@ function enemyChooseRandomCard() {
   if(index !== -1) hand.splice(index, 1);
   redrawHands();
   //定数ダメージ
-  onCardPlayed(card, isPlayer ? player : enemy);
+  await onCardPlayed(card, isPlayer ? player : enemy);
 }
 //カードを出した時の定数ダメージの処理
  async function onCardPlayed(playedCard, playedBy) {
@@ -1229,13 +1229,13 @@ function enemyChooseRandomCard() {
 
 
 //敵が選んだカードが使われる　ここで手札から場に移動
-function closeAndBattle(){
+async function closeAndBattle(){
   cardModal.style.display = "none";
 //相手が選んだカード
   const enemyCard = enemyChooseRandomCard();
   if (!enemyCard) return;
-  playCard(selectedCard,true);
-  playCard(enemyCard,false);
+  await playCard(selectedCard,true);
+  await playCard(enemyCard,false);
 
   startBattle(playerFieldCard, enemyFieldCard);
 }
