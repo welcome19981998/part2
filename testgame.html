@@ -962,7 +962,7 @@ async function runEffect(eff, card, owner, opponent){
    break;
   }
   //カードを出した時にダメージ
-   case "add_on_play_damage": {
+   case "on_play_damage": {
   opponent.status.push({
     type: "on_play_damage",
     conditionText: eff.conditionText,
@@ -1222,8 +1222,8 @@ function enemyChooseRandomCard() {
       ${status.value}ダメージ
     `);
 
-    opponent.life -= status.value;
-    updateLifeDisplay();
+    await applyStatusDamage(opponent, status.value);
+
   }
 }
 
