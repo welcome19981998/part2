@@ -1201,8 +1201,6 @@ function enemyChooseRandomCard() {
   const index = hand.indexOf(card);
   if(index !== -1) hand.splice(index, 1);
   redrawHands();
-  //定数ダメージ
-  await onCardPlayed(card, isPlayer ? player : enemy);
 }
 //カードを出した時の定数ダメージの処理
  async function onCardPlayed(playedCard, playedBy) {
@@ -1266,6 +1264,9 @@ async function startBattle(pCard,eCard){
   p.innerHTML=createCardHTML(pCard);
   e.innerHTML=createCardHTML(eCard);
    await wait(500);
+   //定数ダメージ処理
+   await onCardPlayed(pCard, player);
+   await onCardPlayed(eCard, enemy);
   
     const res=judge(pCard.color,eCard.color);
     
