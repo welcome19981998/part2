@@ -807,7 +807,7 @@ return new Promise(resolve => {
   setTimeout(() => {
     diff.remove();
     resolve();
-  }, 1200);
+  }, 2000);
 });
 }
 
@@ -1337,7 +1337,6 @@ async function startBattle(pCard,eCard){
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
-  await wait(2000);
   layer.style.display="none";
     // ③墓地へ送る
   moveToGrave();
