@@ -744,8 +744,7 @@ function redrawHands(){
   
 /* ===== 汎用ダメージ関数 ===== */
 
-function applyDamage(winner, winnerCard) {
-  return new Promise(resolve => {
+async function applyDamage(winner, winnerCard) {
 
     if (winner === player) {
       const before = enemyLife;
@@ -780,12 +779,12 @@ function applyDamage(winner, winnerCard) {
     console.log("自分ライフ", playerLife, "敵のライフ", enemyLife);
     buff = 0;
     resolve();
-  });
 }
 
   
 /* ===== 画面上のライフを更新　===== */
 function updateLifeDisplay({ target, beforeLife, delta }) {
+return new Promise(resolve => {
   const lifeEl =
     target === player
       ? document.querySelector(".self-area .life")
@@ -809,6 +808,7 @@ function updateLifeDisplay({ target, beforeLife, delta }) {
   setTimeout(() => {
     diff.remove();
   }, 1200);
+});
 }
 
 
