@@ -1495,7 +1495,7 @@ async function onTurnEnd(player) {
 }
 
 //定数ダメージを実際に与える関数
-await function applyStatusDamage(target, value){
+async function applyStatusDamage(target, value){
     const before = target.life;
     // ライフ減少
     target.life -= value;
