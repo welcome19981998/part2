@@ -806,6 +806,7 @@ return new Promise(resolve => {
   // 一定時間後に消す
   setTimeout(() => {
     diff.remove();
+    resolve();
   }, 1200);
 });
 }
