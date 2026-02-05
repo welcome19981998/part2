@@ -754,7 +754,7 @@ async function applyDamage(winner, winnerCard) {
 
       enemyLife -= damage;
 
-      updateLifeDisplay({
+      await updateLifeDisplay({
         target: enemy,
         beforeLife: before,
         delta: -damage
@@ -769,7 +769,7 @@ async function applyDamage(winner, winnerCard) {
 
       playerLife -= damage;
 
-      updateLifeDisplay({
+      await updateLifeDisplay({
         target: player,
         beforeLife: before,
         delta: -damage
@@ -778,7 +778,6 @@ async function applyDamage(winner, winnerCard) {
 
     console.log("自分ライフ", playerLife, "敵のライフ", enemyLife);
     buff = 0;
-    resolve();
 }
 
   
@@ -1497,18 +1496,14 @@ async function onTurnEnd(player) {
 
 //定数ダメージを実際に与える関数
 function applyStatusDamage(target, value){
-  return new Promise(resolve => {
     const before = target.life;
     // ライフ減少
     target.life -= value;
-    updateLifeDisplay({
+   await updateLifeDisplay({
         target: target,
         beforeLife: before,
         delta: -value
       });
-
-    resolve();
-  });
 }
 
 
