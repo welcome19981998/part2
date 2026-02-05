@@ -745,29 +745,72 @@ function redrawHands(){
 /* ===== 汎用ダメージ関数 ===== */
 
 function applyDamage(winner, winnerCard) {
- return new Promise(resolve=>{
-  if (winner === player) {
-    enemyLife -= Number(winnerCard.damage) || 0;
-    enemyLife -= buff; //追加ダメージ
-    updateLifeDisplay();
-   }
+  return new Promise(resolve => {
 
-  if (winner === enemy) {
-    playerLife -= Number(winnerCard.damage) || 0;
-    playerLife -= buff; //追加ダメージ
-    updateLifeDisplay();
-   }
-  console.log("自分ライフ",playerLife,"敵のライフ",enemyLife);
-  buff=0; //バフを初期化
-  resolve();
- });
+    if (winner === player) {
+      const before = enemyLife;
+
+      const damage =
+        (Number(winnerCard.damage) || 0) + buff;
+
+      enemyLife -= damage;
+
+      updateLifeDisplay({
+        target: enemy,
+        beforeLife: before,
+        delta: -damage
+      });
+    }
+
+    if (winner === enemy) {
+      const before = playerLife;
+
+      const damage =
+        (Number(winnerCard.damage) || 0) + buff;
+
+      playerLife -= damage;
+
+      updateLifeDisplay({
+        target: player,
+        beforeLife: before,
+        delta: -damage
+      });
+    }
+
+    console.log("自分ライフ", playerLife, "敵のライフ", enemyLife);
+    buff = 0;
+    resolve();
+  });
 }
+
   
 /* ===== 画面上のライフを更新　===== */
-function updateLifeDisplay(){
-  document.querySelector(".self-area .life").textContent  = "ライフ:" + playerLife;
-  document.querySelector(".enemy-area .life").textContent = "ライフ:" + enemyLife;
+function updateLifeDisplay({ target, beforeLife, delta }) {
+  const lifeEl =
+    target === player
+      ? document.querySelector(".self-area .life")
+      : document.querySelector(".enemy-area .life");
+
+  lifeEl.textContent = "ライフ:" + target.life;
+
+  // ===== 変動表示 =====
+  const diff = document.createElement("span");
+  diff.textContent =
+    (delta > 0 ? "+" : "") + delta;
+
+  diff.style.marginLeft = "6px";
+  diff.style.fontWeight = "bold";
+  diff.style.color =
+    delta < 0 ? "#ff5555" : "#55ff88";
+
+  lifeEl.appendChild(diff);
+
+  // 一定時間後に消す
+  setTimeout(() => {
+    diff.remove();
+  }, 1200);
 }
+
 
 /* ===== デッキから手札が3枚になるまでカードを手札に加える ===== */
 function drawFromDeck(deck, hand, max=3){
@@ -1455,10 +1498,14 @@ async function onTurnEnd(player) {
 //定数ダメージを実際に与える関数
 function applyStatusDamage(target, value){
   return new Promise(resolve => {
-
+    const before = target.life;
     // ライフ減少
     target.life -= value;
-    updateLifeDisplay();
+    updateLifeDisplay({
+        target: target,
+        beforeLife: before,
+        delta: -value
+      });
 
     resolve();
   });
