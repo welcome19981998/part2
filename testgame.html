@@ -1334,6 +1334,7 @@ async function startBattle(pCard,eCard){
 
     // ①勝敗後の効果処理 引き分け以外の場合
   if(winner != "draw"){await resolveCardEffects(winnerCard, winner, loser);}
+  else {await wait(2000);}
    //②ダメージ処理
   await applyDamage(winner,winnerCard);
     //③見た目場のカードを消す
