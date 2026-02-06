@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>挑戦環境 | Battle</title>
+<title>挑戦環境1 | Battle</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -1031,14 +1031,13 @@ async function runEffect(eff, card, owner, opponent){
     ${eff.value}回復
   `);
   const before = target.life;
-  const value = eff.value;
   target.life += eff.value;
 
   // ★ プラス値を渡すだけ
   await updateLifeDisplay({
         target: target,
         beforeLife: before,
-        delta: value
+        delta: eff.value
       });
   break;
 }
