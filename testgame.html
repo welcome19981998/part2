@@ -642,11 +642,11 @@ const CARD_POOL = {
   Y_byred:{ level: 2, damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
   Y_poison1:{level: 2, damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
-  B_heal1: {level: 2,damage: 1,color: "blue",name:"癒しの光",effect: [{ type: "heal", target: "self", value: 3, source: "癒しの光" }],picture: "testblue.jpg"},
+  B_heal4: {level: 2,damage: 0,color: "blue",name:"ポーション",effect: [{ type: "heal", target: "self", value: 4, source: "ポーション" }],picture: "heal4.jpg"},
 };
 
-const PLAYER_decklist =["B_01rebirth","B_01rebirth","R_6","Y_poison1","Y_playblue","Y_playblue","R_6","B_heal1","B_heal1",];
-const ENEMY_decklist = ["Y_poison1","Y_playblue","Y_playblue","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_heal1","B_heal1",];
+const PLAYER_decklist =["B_01rebirth","B_01rebirth","R_6","Y_poison1","Y_playblue","Y_playblue","R_6","B_heal4","B_heal4",];
+const ENEMY_decklist = ["Y_poison1","Y_playblue","Y_playblue","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_heal4","B_heal4",];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -1019,17 +1019,21 @@ async function runEffect(eff, card, owner, opponent){
 　case "heal": {
   const target =
     eff.target === "self" ? owner : opponent;
-
+  await wait(1500);
   await showEffectModal(`
     ${target.name}は
     ${eff.source}により
     ${eff.value}回復
   `);
-
+  const before = target.life;
   target.life += eff.value;
 
   // ★ プラス値を渡すだけ
-  await updateLifeDisplay(target, eff.value);
+  await updateLifeDisplay({
+        target: target,
+        beforeLife: before,
+        delta: value
+      });
   break;
 }
 
