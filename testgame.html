@@ -785,6 +785,7 @@ async function applyDamage(winner, winnerCard) {
 /* ===== 画面上のライフを更新　===== */
 function updateLifeDisplay({ target, beforeLife, delta }) {
 return new Promise(resolve => {
+  if(delta = 0){ resolve();} //0なら即返す
   const lifeEl =
     target === player
       ? document.querySelector(".self-area .life")
