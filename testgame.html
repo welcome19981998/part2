@@ -1026,6 +1026,7 @@ async function runEffect(eff, card, owner, opponent){
     ${eff.value}回復
   `);
   const before = target.life;
+  const value = eff.value;
   target.life += eff.value;
 
   // ★ プラス値を渡すだけ
