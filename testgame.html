@@ -464,8 +464,8 @@ html, body {
     <div class="player-area enemy-area">
       <div class="zone-column">
         <div class="life">ライフ:10</div>
-        <div class="zone">デッキ<br>15</div>
-        <div class="zone" onclick="openGraveModal(false)">墓地</div>
+        <div class="zone">デッキ:<span id="enemy-deck-count">15</span></div>
+        <div class="zone" onclick="openGraveModal(false)">墓地:<span id="enemy-grave-count">0</span></div>
       </div>
       <div class="hand">
         <div class="card" onclick="openEnemyCard(2,3)">
@@ -502,8 +502,8 @@ html, body {
         </div>
       </div>
       <div class="zone-column">
-        <div class="zone" onclick="openGraveModal(true)">墓地</div>
-        <div class="zone" onclick="openDeckModal()">デッキ<br>15</div>
+        <div class="zone" onclick="openGraveModal(true)">墓地:<span id="player-grave-count">0</span></div>
+        <div class="zone" onclick="openDeckModal()">デッキ:<span id="player-deck-count">15</span></div>
         <div class="life">ライフ:10</div>
       </div>
     </div>
@@ -907,6 +907,7 @@ async function runEffect(eff, card, owner, opponent){
       opponent.grave.push(...opponent.hand);
       opponent.hand.length = 0;
       redrawHands();
+      updateZoneCount();
       await wait(400);
       break;
 
@@ -942,6 +943,7 @@ async function runEffect(eff, card, owner, opponent){
   　　hand.splice(index, 1); // 実体を削除
   　　grave.push(card);      // 同じ参照を移動
 　　　redrawHands();
+     updateZoneCount();
   　　break;
 　　}
 
@@ -978,6 +980,7 @@ async function runEffect(eff, card, owner, opponent){
     shuffle(owner.deck);
 
     redrawHands();
+    updateZoneCount();
    break;
   }
    case "decktohand": {
@@ -1013,6 +1016,7 @@ async function runEffect(eff, card, owner, opponent){
     shuffle(owner.deck);
 
     redrawHands();
+    updateZoneCount();
    break;
   }
   //カードを出した時にダメージ
@@ -1096,6 +1100,7 @@ function moveToGrave(){
   enemyFieldCard  = null;
 
   redrawHands();
+  updateZoneCount();
 }
 
 /* ===== スケール ===== */
@@ -1417,6 +1422,7 @@ async function startBattle(pCard,eCard){
   drawFromDeck(enemyDeck,  enemyHandCards,  3);
 
   redrawHands();
+  updateZoneCount();
 }
 
 
@@ -1607,13 +1613,25 @@ function createCardById(cardId) {
   // 深いコピー（effect含む）
   return structuredClone(base);
 }
+//デッキと墓地の枚数を更新
+function updateZoneCount() {
+  document.getElementById("player-deck-count").textContent =
+    player.deck.length;
+  document.getElementById("player-grave-count").textContent =
+    player.grave.length;
+
+  document.getElementById("enemy-deck-count").textContent =
+    enemy.deck.length;
+  document.getElementById("enemy-grave-count").textContent =
+    enemy.grave.length;
+}
 
 
 
 /* ===== ページを読み込んでから手札を読み込む===== */
 
 setupInitialHands();
-
+updateZoneCount();
 </script>
 
 </body>
