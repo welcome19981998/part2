@@ -644,11 +644,12 @@ const CARD_POOL = {
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
   B_heal4: {level: 2,damage: 0,color: "blue",name:"ポーション",effect: [{ type: "heal", target: "self", value: 4, source: "ポーション" }],picture: "heal4.jpg"},
   B_turnheal1: {level: 2,damage: 0,color: "blue",name: "天よりの恵み",effect: [{type: "turn_heal",target: "self",value: 1,source: "天よりの恵み"}],picture: "turnheal1.jpg"},
+　R_baby_R_6: {level: 1,color: "red",name: "幼竜",damage: 0,effect: [{ type: "evolve", into: "R_6", intoname: "レッドドラゴン" }],picture: "testred.jpg"},
 
 };
 
-const PLAYER_decklist =["B_01rebirth","B_turnheal1","R_6","Y_poison1","Y_playblue","B_turnheal1","R_6","B_heal4","B_heal4",];
-const ENEMY_decklist = ["Y_poison1","Y_playblue","B_turnheal1","R_test1","R_test1","R_test1","B_turnheal1","R_6","R_6","B_heal4","R_6",];
+const PLAYER_decklist =["B_01rebirth","B_turnheal1","R_baby_R_6","Y_poison1","Y_playblue","B_turnheal1","R_baby_R_6","B_heal4","B_heal4",];
+const ENEMY_decklist = ["Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -843,6 +844,7 @@ const player = {
   get hand(){ return playerHandCards },
   get deck(){ return playerDeck },
   get grave(){ return playerGrave },
+  get fieldcard(){ return playerFieldCard },
   get life(){ return playerLife },
   set life(v){ playerLife = v },
   status: []
@@ -853,6 +855,7 @@ const enemy = {
   get hand(){ return enemyHandCards },
   get deck(){ return enemyDeck },
   get grave(){ return enemyGrave },
+  get fieldcard(){ return enemyFieldCard },
   get life(){ return enemyLife },
   set life(v){ enemyLife=v },
   status: []
@@ -1053,6 +1056,22 @@ case "turn_heal": {
     value: eff.value,
     source: eff.source
   });
+  break;
+}
+case "evolve": {
+  await wait(1500);//ダメージ発生しないのでこの間は大事
+  await showEffectModal(`
+    ${owner.name}のカードは手札に戻り
+    ${eff.intoname}に進化した！
+  `);
+
+  const newCard = createCardById(eff.into);
+  if (!newCard) break;
+
+  owner.hand.push(newCard);
+  owner.fieldcard = null;// ★ 何もしない = このカードは墓地にも行かず消える
+  redrawHands();
+
   break;
 }
 
@@ -1571,6 +1590,17 @@ async function applyStatusDamage(target, value){
         delta: -value
       });
 }
+//カードをIDでデッキ外から呼び出す関数、進化に使う
+function createCardById(cardId) {
+  const base = CARD_POOL[cardId];
+  if (!base) {
+    console.error("カードIDが存在しません:", cardId);
+    return null;
+  }
+  // 深いコピー（effect含む）
+  return structuredClone(base);
+}
+
 
 
 /* ===== ページを読み込んでから手札を読み込む===== */
