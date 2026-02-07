@@ -643,10 +643,12 @@ const CARD_POOL = {
   Y_poison1:{level: 2, damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
   B_heal4: {level: 2,damage: 0,color: "blue",name:"ポーション",effect: [{ type: "heal", target: "self", value: 4, source: "ポーション" }],picture: "heal4.jpg"},
+  B_turnheal1: {level: 2,damage: 0,color: "blue",name: "再生の護符",effect: [{type: "turn_heal",target: "self",value: 1,source: "再生の護符"}],picture: "testblue.jpg"},
+
 };
 
-const PLAYER_decklist =["B_01rebirth","B_01rebirth","R_6","Y_poison1","Y_playblue","Y_playblue","R_6","B_heal4","B_heal4",];
-const ENEMY_decklist = ["Y_poison1","Y_playblue","Y_playblue","R_test1","R_test1","R_test1","YB_test1","Y_byred","Y_byred","B_heal4","B_heal4",];
+const PLAYER_decklist =["B_01rebirth","B_turnheal1","R_6","Y_poison1","Y_playblue","B_turnheal1","R_6","B_heal4","B_heal4",];
+const ENEMY_decklist = ["Y_poison1","Y_playblue","B_turnheal1","R_test1","R_test1","R_test1","B_turnheal1","R_6","R_6","B_heal4","R_6",];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -1039,6 +1041,17 @@ async function runEffect(eff, card, owner, opponent){
         beforeLife: before,
         delta: eff.value
       });
+  break;
+}
+case "turn_heal": {
+  const target =
+    eff.target === "self" ? owner : opponent;
+
+  target.status.push({
+    type: "turn_heal",
+    value: eff.value,
+    source: eff.source
+  });
   break;
 }
 
@@ -1506,10 +1519,34 @@ function finishSelect() {
 }
 //ターン最後の処理　ダメージなど
 async function onTurnEnd(player) {
-  const statuses = player.status
+
+  // ★ 回復
+  const heals = player.status
+    .filter(s => s.type === "turn_heal");
+
+  for (const status of heals) {
+    await showEffectModal(`
+      ${player.name}は
+      ${status.source}により
+      ${status.value}回復
+    `);
+
+    const before = player.life;
+    player.life += status.value;
+
+    await updateLifeDisplay({
+      target: player,
+      beforeLife: before,
+      delta: status.value
+    });
+
+    await wait(500);
+  }
+  // ダメージ
+  const damages = player.status
     .filter(s => s.type === "turn_damage");
 
-  for (const status of statuses) {
+  for (const status of damages) {
     await showEffectModal(`
       ${player.name}は
       ${status.source}により
@@ -1520,6 +1557,7 @@ async function onTurnEnd(player) {
     await wait(500);
   }
 }
+
 
 //定数ダメージを実際に与える関数
 async function applyStatusDamage(target, value){
