@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>挑戦環境2 | Battle</title>
+<title>挑戦環境3 | Battle</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -880,7 +880,7 @@ async function runEffect(eff, card, owner, opponent){
   　　　buff += bonus;
        const zoneLabel = ZONE_LABEL[eff.zone] ?? eff.zone;// ← 墓地を墓地と文字化するため
   console.log(
-    `${targetPlayer.name}の${zoneLabel}の${eff.card}$は{count}枚 → +${bonus}ダメージ`
+    `${targetPlayer.name}の${zoneLabel}の${eff.card}$は${count}枚 → +${bonus}ダメージ`
   );
 　await wait(1500);
       await showEffectModal(`
@@ -1069,7 +1069,10 @@ case "evolve": {
   if (!newCard) break;
 
   owner.hand.push(newCard);
-  owner.fieldcard = null;// ★ 何もしない = このカードは墓地にも行かず消える
+  //フィールドから消す
+  owner.fieldcard = null;
+  // 墓地に送らないフラグ
+  card.skipGrave = true;
   redrawHands();
 
   break;
@@ -1082,8 +1085,12 @@ case "evolve": {
 /* =====　場に出したカードを墓地へ送る関数 ===== */
 function moveToGrave(){
   //　場にある場合は場から墓地へ
-  if(playerFieldCard) playerGrave.push(playerFieldCard);
-  if(enemyFieldCard)  enemyGrave.push(enemyFieldCard);
+  if (playerFieldCard && !playerFieldCard.skipGrave) {
+  playerGrave.push(playerFieldCard);
+}
+  if (enemyFieldCard && !enemyFieldCard.skipGrave) {
+  enemyGrave.push(enemyFieldCard);
+}
 
   playerFieldCard = null;
   enemyFieldCard  = null;
