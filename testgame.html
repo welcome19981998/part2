@@ -568,6 +568,9 @@ html, body {
 let playerLife = 10;
 let enemyLife  = 10;
 
+/* ===== ターン数を宣言　初期値は1ターン目 ===== */
+let turnCount = 1;
+
 /* ===== 手札の配列を宣言 ===== */
 
 let playerHandCards = [];
@@ -1471,6 +1474,9 @@ async function startBattle(pCard,eCard){
 
   redrawHands();
   updateZoneCount();
+  //⑥ターンの始まり
+  turnCount++;
+  showTurnStart();
 }
 
 
@@ -1673,13 +1679,21 @@ function updateZoneCount() {
   document.getElementById("enemy-grave-count").textContent =
     `墓地:${enemyGrave.length}枚`;
 }
-
-
+//ターンの最初にターンを表示させる関数
+function showTurnStart() {
+  showEffectModal(`
+    ${turnCount}ターン目です
+    <br>
+    場に出すカードを選んでください
+    赤は黄に勝ち、黄は青に勝ち、青は赤に勝ちます
+  `);
+}
 
 /* ===== ページを読み込んでから手札を読み込む===== */
 
 setupInitialHands();
 updateZoneCount();
+showTurnStart();
 </script>
 
 </body>
