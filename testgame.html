@@ -465,7 +465,7 @@ html, body {
       <div class="zone-column">
         <div class="life">ライフ:10</div>
         <div class="zone" id="enemy-deck-count">デッキ:9枚</div>
-        <div class="zone" id="enemy-grave-count" onclick="openGraveModal(false)">墓地:0枚</div>
+        <div class="zone" id="enemy-grave-count" onclick="if (isEffectResolving) return; openGraveModal(false);">墓地:0枚</div>
       </div>
       <div class="hand">
         <div class="card" onclick="openEnemyCard(2,3)">
@@ -502,8 +502,8 @@ html, body {
         </div>
       </div>
       <div class="zone-column">
-        <div class="zone" id="player-grave-count" onclick="openGraveModal(true)">墓地:0枚</div>
-        <div class="zone" id="player-deck-count" onclick="openDeckModal()">デッキ:9枚</div>
+        <div class="zone" id="player-grave-count" onclick="if (isEffectResolving) return; openGraveModal(true);">墓地:0枚</div>
+        <div class="zone" id="player-deck-count" onclick="if (isEffectResolving) return; openDeckModal();">デッキ:9枚</div>
         <div class="life">ライフ:10</div>
       </div>
     </div>
