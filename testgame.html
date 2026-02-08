@@ -647,6 +647,12 @@ const CARD_POOL = {
   B_decktohand1:{ level: 3,name: "魔法の辞書", damage: 2, color: "blue",effect:[{type:"decktohand",max: 1,card:"カード",filter: "any"}],picture:"magicd.jpg" },
   R_test1:{ level: 2,name: "テストレッド", damage: 2, color: "red",picture:"testred.jpg"},
   R_6:{ level: 3,name: "レッドドラゴン", damage: 6, color: "red",picture:"red6.jpg"},
+  R_4:{ level: 2,name: "悪魔の斧", damage: 4, color: "red",picture:"red4.jpg"},
+  R_2:{ level: 1,name: "コンバットナイフ", damage: 2, color: "red",picture:"red2.jpg"},
+  Y_4:{ level: 2,name: "ワイバーン", damage: 4, color: "yellow",picture:"yellow4.jpg"},
+  Y_2:{ level: 1,name: "ゴブリン", damage: 2, color: "yellow",picture:"yellow2.jpg"},
+  B_4:{ level: 2,name: "炎の精霊", damage: 4, color: "blue",picture:"blue4.jpg"},
+  B_2:{ level: 1,name: "火の魔法", damage: 2, color: "blue",picture:"blue2.jpg"},
   Y_byred:{ level: 2,name: "復讐の老龍", damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
   Y_poison1:{level: 2,name: "毒ヘビ", damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
@@ -657,13 +663,14 @@ const CARD_POOL = {
 　Y_lich:{ level: 3,name: "不死の帝王", damage: 0, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"カード",filter:"any",per: 1},{type: "damage_by_card_count",target: "self",zone: "grave",card:"カード",filter:"any",per: 1},],picture:"lich.jpg" },
 };
 
-const PLAYER_decklist =["B_steal1","B_02discard1","R_baby_R_6","Y_poison1","B_01rebirth","B_turnheal1","R_baby_R_6","Y_lich","B_decktohand1",];
+const PLAYER_decklist =["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",];
 const ENEMY_DECKLISTS = [
 ["B_steal1","B_steal1","Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",],
 ["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
 ["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
 ["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 ["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
+["B_steal1","B_02discard1","R_baby_R_6","Y_poison1","B_01rebirth","B_turnheal1","R_baby_R_6","Y_lich","B_decktohand1",],//検証用
 ];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
