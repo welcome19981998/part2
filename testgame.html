@@ -642,18 +642,19 @@ const CARD_POOL = {
   R_test1:{ level: 2,name: "テストレッド", damage: 2, color: "red",picture:"testred.jpg"},
   R_6:{ level: 3,name: "レッドドラゴン", damage: 6, color: "red",picture:"red6.jpg"},
   Y_byred:{ level: 2,name: "復讐の老龍", damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
-  Y_poison1:{level: 2, damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
+  Y_poison1:{level: 2,name: "毒ヘビ", damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
   B_heal4: {level: 2,damage: 0,color: "blue",name:"ポーション",effect: [{ type: "heal", target: "self", value: 4, source: "ポーション" }],picture: "heal4.jpg"},
   B_turnheal1: {level: 2,damage: 0,color: "blue",name: "天よりの恵み",effect: [{type: "turn_heal",target: "self",value: 1,source: "天よりの恵み"}],picture: "turnheal1.jpg"},
 　R_baby_R_6: {level: 1,color: "red",name: "ベビードラゴン",damage: 0,effect: [{ type: "evolve", into: "R_6", intoname: "レッドドラゴン" }],picture: "baby_red6.jpg"},
-　B_steal1:{ level: 3, name: "盗む", damage: 0, color: "blue",effect:[{type:"steal_hand_select"}],picture:"testblue.jpg" },
+　B_steal1:{ level: 3, name: "盗む", damage: 0, color: "blue",effect:[{type:"steal_hand_select"}],picture:"steal1.jpg" },
 };
 
 const PLAYER_decklist =["B_steal1","B_steal1","R_baby_R_6","Y_poison1","Y_playblue","B_turnheal1","R_baby_R_6","B_heal4","B_heal4",];
 const ENEMY_DECKLISTS = [
   ["B_steal1","B_steal1","Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",],
 ["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
+["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",]
 ];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
