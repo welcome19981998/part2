@@ -648,7 +648,7 @@ const CARD_POOL = {
   B_turnheal1: {level: 2,damage: 0,color: "blue",name: "天よりの恵み",effect: [{type: "turn_heal",target: "self",value: 1,source: "天よりの恵み"}],picture: "turnheal1.jpg"},
 　R_baby_R_6: {level: 1,color: "red",name: "ベビードラゴン",damage: 0,effect: [{ type: "evolve", into: "R_6", intoname: "レッドドラゴン" }],picture: "baby_red6.jpg"},
 　B_steal1:{ level: 3, name: "盗む", damage: 0, color: "blue",effect:[{type:"steal_hand_select"}],picture:"steal1.jpg" },
-　Y_lich:{ level: 3,name: "不死の帝王", damage: 0, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"カード",filter:"any",per: 1},{type: "damage_by_card_count",target: "owner",zone: "grave",card:"カード",filter:"any",per: 1},],picture:"lich.jpg" },
+　Y_lich:{ level: 3,name: "不死の帝王", damage: 0, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"カード",filter:"any",per: 1},{type: "damage_by_card_count",target: "self",zone: "grave",card:"カード",filter:"any",per: 1},],picture:"lich.jpg" },
 };
 
 const PLAYER_decklist =["B_steal1","B_steal1","R_baby_R_6","Y_poison1","Y_lich","B_turnheal1","R_baby_R_6","Y_lich","B_heal4",];
