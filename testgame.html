@@ -571,6 +571,9 @@ let enemyLife  = 10;
 /* ===== ターン数を宣言　初期値は1ターン目 ===== */
 let turnCount = 1;
 
+/* ===== 効果処理中フラグ　処理中は手札をクリックできない ===== */
+let isEffectResolving = false;
+
 /* ===== 手札の配列を宣言 ===== */
 
 let playerHandCards = [];
@@ -699,7 +702,8 @@ function createCardElement(card, isPlayer) {
     return;
   }
 
-  // 通常時
+  // 通常時　効果処理中ならカードは開けない
+  if (isEffectResolving) return;
   isPlayer ? openPlayerCard(card, false) : openEnemyCard(card);
 };
   return div;
@@ -1394,6 +1398,7 @@ function enemyChooseRandomCard() {
 
 //敵が選んだカードが使われる　ここで手札から場に移動
 async function closeAndBattle(){
+  isEffectResolving = true;//効果処理中は手札クリックできない
   cardModal.style.display = "none";
 //相手が選んだカード
   const enemyCard = enemyChooseRandomCard();
@@ -1477,6 +1482,8 @@ async function startBattle(pCard,eCard){
   //⑥ターンの始まり
   turnCount++;
   showTurnStart();
+  //手札クリックできるようになる
+  isEffectResolving = false;
 }
 
 
