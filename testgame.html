@@ -649,7 +649,10 @@ const CARD_POOL = {
 };
 
 const PLAYER_decklist =["B_01rebirth","B_turnheal1","R_baby_R_6","Y_poison1","Y_playblue","B_turnheal1","R_baby_R_6","B_heal4","B_heal4",];
-const ENEMY_decklist = ["Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",];
+const ENEMY_DECKLISTS = [
+  ["Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",],
+["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
+];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
   for(let i=array.length-1;i>0;i--){
@@ -712,6 +715,12 @@ function setupInitialHands() {
   // デッキを作成　元デッキデータからコピーして中身シャッフルして作成
   playerDeck = createDeck(PLAYER_decklist);
   shuffle(playerDeck);
+//以下三行はいずれ消したいが、敵のデッキリストはランダムで選ばれるように一旦する
+  const ENEMY_decklist =
+  ENEMY_DECKLISTS[
+    Math.floor(Math.random() * ENEMY_DECKLISTS.length)
+  ];
+//
   enemyDeck  = createDeck(ENEMY_decklist);
   shuffle(enemyDeck);
   // 初期手札3枚
