@@ -663,14 +663,21 @@ const CARD_POOL = {
 　Y_lich:{ level: 3,name: "不死の帝王", damage: 0, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"カード",filter:"any",per: 1},{type: "damage_by_card_count",target: "self",zone: "grave",card:"カード",filter:"any",per: 1},],picture:"lich.jpg" },
 };
 
-const PLAYER_decklist =["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",];
+const PLAYER_DECKLISTS =[
+["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
+["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
+["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
+];
 const ENEMY_DECKLISTS = [
-["B_steal1","B_steal1","Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",],
-["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
-["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
-["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
-["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
+//["B_steal1","B_steal1","Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",],
+//["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
+//["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
+//["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
+//["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 ["B_steal1","B_02discard1","R_baby_R_6","Y_poison1","B_01rebirth","B_turnheal1","R_baby_R_6","Y_lich","B_decktohand1",],//検証用
+["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
+["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
+["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 ];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
@@ -733,6 +740,12 @@ function setupInitialHands() {
 
 
   // デッキを作成　元デッキデータからコピーして中身シャッフルして作成
+  //以下三行はいずれ消したいが、自分のデッキリストはランダムで選ばれるように一旦する
+  const PLAYER_decklist =
+  PLAYER_DECKLISTS[
+    Math.floor(Math.random() * PLAYER_DECKLISTS.length)
+  ];
+//
   playerDeck = createDeck(PLAYER_decklist);
   shuffle(playerDeck);
 //以下三行はいずれ消したいが、敵のデッキリストはランダムで選ばれるように一旦する
