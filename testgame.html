@@ -1682,10 +1682,12 @@ function updateZoneCount() {
 //ターンの最初にターンを表示させる関数
 function showTurnStart() {
   showEffectModal(`
+  <div style="text-align:center;">
     ${turnCount}ターン目です
-    <br>
+    
     場に出すカードを選んでください
     赤は黄に勝ち、黄は青に勝ち、青は赤に勝ちます
+    </div>
   `);
 }
 
