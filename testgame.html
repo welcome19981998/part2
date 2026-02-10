@@ -655,6 +655,7 @@ const CARD_POOL = {
   B_2:{ level: 1,name: "火の魔法", damage: 2, color: "blue",picture:"blue2.jpg"},
   Y_byred:{ level: 2,name: "復讐の老龍", damage: 2, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"赤のカード",filter:"red",per: 2}],picture:"revedra.jpg" },
   Y_poison1:{level: 2,name: "毒ヘビ", damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
+  Y_poison2:{level: 2,name: "ポイズンドラゴン", damage: 3, color: "yellow",effect: [{ type: "turn_damage", source: "ポイズンドラゴン", value: 1 }],picture:"poison2.jpg"},
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
   B_heal4: {level: 2,damage: 0,color: "blue",name:"ポーション",effect: [{ type: "heal", target: "self", value: 4, source: "ポーション" }],picture: "heal4.jpg"},
   B_turnheal1: {level: 2,damage: 0,color: "blue",name: "天よりの恵み",effect: [{type: "turn_heal",target: "self",value: 1,source: "天よりの恵み"}],picture: "turnheal1.jpg"},
@@ -665,7 +666,7 @@ const CARD_POOL = {
 
 const PLAYER_DECKLISTS =[
 ["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
-["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
+["B_4","B_4","Y_poison2","Y_poison2","R_6","R_6",],
 ["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 ];
 const ENEMY_DECKLISTS = [
@@ -678,6 +679,8 @@ const ENEMY_DECKLISTS = [
 ["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 ["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
 ["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
+["B_4","B_4","Y_poison2","Y_poison2","R_6","R_6",],
+
 ];
 /* ===== シャッフル関数 ===== */
 function shuffle(array){
