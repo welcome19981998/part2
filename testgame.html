@@ -630,6 +630,28 @@ const CARD_POOL = {
     blue: { color:"blue", damage:2, effect:[{type:"discard_all"}],picture:"twinbomb.jpg" }
    }
   },
+  YB_Y2B2:{
+  level: 2,
+  name: "幸運の渡り鳥",
+  color: "yellow",
+  picture: "yellow2blue2base.jpg",
+
+  choice: {
+    yellow:  { color:"yellow",  damage:2, picture: "yellow2blue2yellow.jpg"},
+    blue: { color:"blue", damage:2, picture:"yellow2blue2blue.jpg" }
+   }
+  },
+  RB_R4B2:{
+  level: 2,
+  name: "光と闇の仮面",
+  color: "red",
+  picture: "red4blue2base.jpg",
+
+  choice: {
+    yellow:  { color:"red",  damage:4, picture: "red4blue2red.jpg"},
+    blue: { color:"blue", damage:2, picture:"red4blue2blue.jpg" }
+   }
+  },
   R_testcoice1:{
   level: 3,
   name: "テストレッドチョイス",
@@ -657,6 +679,7 @@ const CARD_POOL = {
   Y_poison1:{level: 2,name: "毒ヘビ", damage: 1, color: "yellow",effect: [{ type: "turn_damage", source: "毒ヘビ", value: 1 }],picture:"poison.jpg"},
   Y_poison2:{level: 2,name: "ポイズンドラゴン", damage: 3, color: "yellow",effect: [{ type: "turn_damage", source: "ポイズンドラゴン", value: 1 }],picture:"poison2.jpg"},
   Y_playblue:{level: 2, damage: 2, color: "yellow", name:"樹海の番人",effect:[{type: "on_play_damage",value: 2,source: "樹海の番人",conditionText: "青のカードを出したため",condition: "blue"}],picture:"bannin.jpg"},
+  Y_playred4:{level: 3, damage: 2, color: "yellow", name:"地獄の石盤",effect:[{type: "on_play_damage",value: 2,source: "地獄の石盤",conditionText: "赤のカードを出したため",condition: "red"}],picture:"sekiban.jpg"},
   B_heal4: {level: 2,damage: 0,color: "blue",name:"ポーション",effect: [{ type: "heal", target: "self", value: 4, source: "ポーション" }],picture: "heal4.jpg"},
   B_turnheal1: {level: 2,damage: 0,color: "blue",name: "天よりの恵み",effect: [{type: "turn_heal",target: "self",value: 1,source: "天よりの恵み"}],picture: "turnheal1.jpg"},
 　R_baby_R_6: {level: 1,color: "red",name: "ベビードラゴン",damage: 0,effect: [{ type: "evolve", into: "R_6", intoname: "レッドドラゴン" }],picture: "baby_red6.jpg"},
@@ -665,11 +688,12 @@ const CARD_POOL = {
 };
 
 const PLAYER_DECKLISTS =[
-["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
+//["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
+["YB_Y2B2","RB_R4B2","YB_Y2B2","RB_R4B2","Y_playred4","Y_playblue","R_baby_R_6","R_baby_R_6","R_2",],
 //["B_4","B_4","Y_poison2","Y_poison2","R_6","R_6",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
+//["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 ["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
+//["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 ];
 const ENEMY_DECKLISTS = [
 //["B_steal1","B_steal1","Y_poison1","Y_playblue","Y_byred","R_baby_R_6","R_baby_R_6","R_test1","Y_byred","R_6","R_6","B_heal4","R_6",],
@@ -678,11 +702,12 @@ const ENEMY_DECKLISTS = [
 //["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 //["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 ["B_steal1","B_02discard1","R_baby_R_6","Y_poison1","B_01rebirth","B_turnheal1","R_baby_R_6","Y_lich","B_decktohand1",],//検証用
-["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
+//["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 //["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
+//["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
+//["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
 //["B_4","B_4","Y_poison2","Y_poison2","R_6","R_6",],
+["YB_Y2B2","RB_R4B2","YB_Y2B2","RB_R4B2","Y_playred4","Y_playblue","R_baby_R_6","R_baby_R_6","R_2",],
 
 ];
 /* ===== シャッフル関数 ===== */
