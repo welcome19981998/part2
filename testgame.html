@@ -997,6 +997,13 @@ async function runEffect(eff, card, owner, opponent){
       `);
   break;
 }
+    case "turn_damage":
+     opponent.status.push({
+     type: eff.type,
+     value: eff.value,
+     source: eff.source,
+     });
+     break;
 
     case "discard_all":
       await wait(1500);
