@@ -685,6 +685,12 @@ const CARD_POOL = {
 　R_baby_R_6: {level: 1,color: "red",name: "ベビードラゴン",damage: 0,effect: [{ type: "evolve", into: "R_6", intoname: "レッドドラゴン" }],picture: "baby_red6.jpg"},
 　B_steal1:{ level: 3, name: "盗む", damage: 0, color: "blue",effect:[{type:"steal_hand_select"}],picture:"steal1.jpg" },
 　Y_lich:{ level: 3,name: "不死の帝王", damage: 0, color: "yellow",effect:[{type: "damage_by_card_count",target: "opponent",zone: "grave",card:"カード",filter:"any",per: 1},{type: "damage_by_card_count",target: "self",zone: "grave",card:"カード",filter:"any",per: 1},],picture:"lich.jpg" },
+  Y_meteo:{
+  level: 2,name: "メテオ", damage: 0, color: "yellow",effect:[{
+  type: "turn_count_damage",
+  target: "opponent",
+  per: 1,
+  source: "メテオ"}],picture:"meteo.jpg"},
 };
 
 const PLAYER_DECKLISTS =[
@@ -962,14 +968,6 @@ async function runEffect(eff, card, owner, opponent){
       `);
   break;
 }
-    case "turn_damage":
-     opponent.status.push({
-     type: eff.type,
-     value: eff.value,
-     source: eff.source,
-     });
-     break;
-
 
     case "discard_all":
       await wait(1500);
@@ -1188,7 +1186,22 @@ case "evolve": {
 
   break;
 }
+case "turn_count_damage": {
+  const target =
+    eff.target === "self" ? owner : opponent;
 
+  const damage = turnCount * eff.per;      
+    buff += damage;
+
+  await wait(1500);
+
+  await showEffectModal(`
+    ${target.name}は
+    ${eff.source}により
+    ${damage}ダメージ
+  `);
+  break;
+}
 
    }
 }
