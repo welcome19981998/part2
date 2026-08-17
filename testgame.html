@@ -691,6 +691,35 @@ const CARD_POOL = {
   target: "opponent",
   per: 1,
   source: "メテオ"}],picture:"meteo.jpg"},
+  R_haif:{
+    level: 2,name: "一刀両断", damage: 0, color: "red",
+    effect:[{
+  type: "change_life",
+  target: "opponent",
+  mode: "half",
+  source: "一刀両断"
+}],picture:"ryoudan.jpg"
+  },
+  R_set4:{
+    level: 3,name: "魔女の呪い", damage: 0, color: "red",
+    effect:[{
+  type: "change_life",
+  target: "opponent",
+  mode: "set",
+  value: 4,
+  source: "魔女の呪い"
+}],picture:"majo.jpg"
+  },
+  B_set14:{
+    level: 3,name: "生命の樹", damage: 0, color: "blue",
+    effect:[{
+  type: "change_life",
+  target: "self",
+  mode: "set",
+  value: 14,
+  source: "生命の樹"
+}],picture:"seimei.jpg"
+  },
 };
 
 const PLAYER_DECKLISTS =[
@@ -1200,6 +1229,47 @@ case "turn_count_damage": {
     ${eff.source}により
     ${damage}ダメージ
   `);
+  break;
+}
+ case "change_life": {
+  const target =
+    eff.target === "self" ? owner : opponent;
+
+  const before = target.life;
+
+  let newLife;
+
+  if (eff.mode === "half") {
+    newLife = Math.floor(before / 2);
+  }
+
+  if (eff.mode === "set") {
+    newLife = eff.value;
+  }
+
+  if (eff.mode === "multiply") {
+    newLife = before * eff.value;
+  }
+
+  const delta = newLife - before;
+
+  await wait(1500);
+
+  await showEffectModal(`
+    ${target.name}のライフが
+    ${newLife}になります
+  `);
+
+  target.life = newLife;
+
+  if (delta !== 0) {
+    await updateLifeDisplay({
+      target: target,
+      beforeLife: before,
+      delta: delta
+    });
+  }
+
   break;
 }
 
