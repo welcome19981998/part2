@@ -729,13 +729,22 @@ const CARD_POOL = {
   source: "バーサーカー"
 }],picture:"basa.jpg"
   },
+  R_mino:{
+    level: 2,name: "ミノタウロス", damage: 5, color: "red",
+  effect:[{
+  type: "damage",
+  target: "self",
+  value: 2,
+  source: "ミノタウロス"
+}],picture:"mino.jpg"
+  },
 };
 
 const PLAYER_DECKLISTS =[
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 //["R_haif","R_set4","B_set14","R_set4","B_set14","Y_playblue","R_haif","R_baby_R_6","R_2",],
 //["B_4","B_4","Y_poison2","Y_meteo","R_6","R_6",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_basa","R_basa","R_4","R_4",],
+["B_2","B_2","Y_meteo","Y_2","Y_2","Y_poison1","Y_poison1","R_basa","R_basa","R_mino","R_mino",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 ];
@@ -745,12 +754,12 @@ const ENEMY_DECKLISTS = [
 //["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
 //["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 //["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
-["B_steal1","Y_poison2","R_basa","Y_meteo","B_01rebirth","B_turnheal1","R_haif","Y_lich","B_decktohand1",],//検証用
+//["B_steal1","Y_poison2","R_basa","Y_meteo","B_01rebirth","B_turnheal1","R_haif","Y_lich","B_decktohand1",],//検証用
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 //["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
-["B_4","B_4","Y_poison2","Y_poison2","B_01rebirth","R_basa","R_basa",],
+["B_4","B_4","Y_poison2","Y_poison2","Y_byred","R_mino","R_mino",],
 //["YB_Y2B2","RB_R4B2","YB_Y2B2","RB_R4B2","Y_playred4","Y_playblue","R_baby_R_6","R_baby_R_6","R_2",],
 
 ];
@@ -985,6 +994,23 @@ let buff = 0;
 async function runEffect(eff, card, owner, opponent){
 
   switch(eff.type){
+      
+    case "damage": { //反動系ダメージ
+  const target =
+    eff.target === "self" ? owner : opponent;
+
+  await wait(1500);
+
+  await showEffectModal(`
+    ${target.name}は
+    ${eff.source}により
+    ${eff.value}ダメージ
+  `);
+
+  await applyStatusDamage(target, eff.value);
+
+  break;
+}
 
     case "damage_by_card_count": {
   　　const targetPlayer =
