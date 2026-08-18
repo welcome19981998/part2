@@ -667,6 +667,7 @@ const CARD_POOL = {
   B_02discard1:{ level: 3,name: "グリムリーパー", damage: 2, color: "blue",effect:[{type:"hand_discard_select"}],picture:"grimblue.jpg" },
   B_02discard2:{ level: 3,name: "ツインボム", damage: 2, color: "blue",effect:[{type:"discard_all"}],picture:"twinbomb.jpg" },
   B_decktohand1:{ level: 3,name: "魔法の辞書", damage: 2, color: "blue",effect:[{type:"decktohand",max: 1,card:"カード",filter: "any"}],picture:"magicd.jpg" },
+  B_gravetohand1:{ level: 3,name: "起死回生", damage: 2, color: "blue",effect:[{type: "grave_to_hand",target: "self",value: 1,filter: "any",source: "起死回生"}],picture:"kisi.jpg" },
   R_test1:{ level: 2,name: "テストレッド", damage: 2, color: "red",picture:"testred.jpg"},
   R_6:{ level: 3,name: "レッドドラゴン", damage: 6, color: "red",picture:"red6.jpg"},
   R_4:{ level: 2,name: "悪魔の斧", damage: 4, color: "red",picture:"red4.jpg"},
@@ -742,20 +743,20 @@ const CARD_POOL = {
 
 const PLAYER_DECKLISTS =[
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
-["R_haif","R_set4","B_set14","R_set4","B_set14","Y_playblue","R_haif","R_baby_R_6","R_2",],
-["B_4","B_4","Y_poison2","Y_poison2","R_6","R_6",],
+//["R_haif","R_set4","B_set14","R_set4","B_set14","Y_playblue","R_haif","R_baby_R_6","R_2",],
+["B_gravetohand1","B_gravetohand1","Y_poison2","Y_poison2","R_6","R_6",],
 ["B_2","B_2","Y_meteo","Y_2","Y_2","Y_poison1","Y_poison1","R_basa","R_basa","R_mino","R_mino",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_lich","Y_poison1","R_basa","R_basa",],
+["B_2","B_2","B_02discard1","B_gravetohand1","Y_2","Y_2","Y_lich","Y_poison1","R_basa","R_basa",],
 ];
 const ENEMY_DECKLISTS = [
-["R_set4","R_set4","Y_poison1","Y_playblue","Y_byred","R_haif","R_haif","Y_meteo","Y_byred","R_6","B_set14","B_set14","R_6",],
+["R_set4","Y_poison1","Y_playblue","Y_byred","R_haif","R_haif","Y_meteo","Y_byred","R_6","B_set14","B_set14","R_6",],
 //["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
 //["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
-["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
+["B_steal1","B_gravetohand1","Y_lich","Y_lich","R_baby_R_6","B_gravetohand1","R_6","R_baby_R_6",],
 //["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 //["B_steal1","Y_poison2","R_basa","Y_meteo","B_01rebirth","B_turnheal1","R_haif","Y_lich","B_decktohand1",],//検証用
-["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_basa","R_6",],
+//["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_basa","R_6",],
 //["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
@@ -1335,6 +1336,34 @@ case "turn_count_damage": {
 
   target.grave.push(...cards);
 
+  updateZoneCount();
+
+  break;
+}
+  case "grave_to_hand": {　//墓地から手札へ
+   const target =
+    eff.target === "self" ? owner : opponent;
+　　 const filterFn = FILTERS[eff.filter] ?? FILTERS.any; //フィルター何も無いなら全対象にする
+    
+  const targets = await selectCards({
+    selector: owner,
+    owner: target,
+    zone: "grave",
+    filter: filterFn,
+    max: eff.value
+  });
+
+  if (targets.length === 0) break;
+
+  for (const card of targets) {
+    const index = target.grave.indexOf(card);
+    if (index === -1) continue;
+
+    target.grave.splice(index, 1);
+    target.hand.push(card);
+  }
+
+  redrawHands();
   updateZoneCount();
 
   break;
