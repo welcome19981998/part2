@@ -745,23 +745,24 @@ const PLAYER_DECKLISTS =[
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 //["R_haif","R_set4","B_set14","R_set4","B_set14","Y_playblue","R_haif","R_baby_R_6","R_2",],
 ["B_gravetohand1","B_gravetohand1","Y_poison2","Y_poison2","R_6","R_6",],
-["B_2","B_2","Y_meteo","Y_2","Y_2","Y_poison1","Y_poison1","R_basa","R_basa","R_mino","R_mino",],
+//["B_2","B_2","Y_meteo","Y_2","Y_2","Y_poison1","Y_poison1","R_basa","R_basa","R_mino","R_mino",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
-["B_2","B_2","B_02discard1","B_gravetohand1","Y_2","Y_2","Y_lich","Y_poison1","R_basa","R_basa",],
+//["B_2","B_2","B_02discard1","B_gravetohand1","Y_2","Y_2","Y_lich","Y_poison1","R_basa","R_basa",],
 ];
 const ENEMY_DECKLISTS = [
-["R_set4","Y_poison1","Y_playblue","Y_byred","R_haif","R_haif","Y_meteo","Y_byred","R_6","B_set14","B_set14","R_6",],
+["B_gravetohand1","B_gravetohand1","Y_poison2","Y_poison2","R_6","R_6",],
+//["R_set4","Y_poison1","Y_playblue","Y_byred","R_haif","R_haif","Y_meteo","Y_byred","R_6","B_set14","B_set14","R_6",],
 //["Y_poison1","Y_playblue","B_02discard1","B_02discard2","R_baby_R_6","R_baby_R_6","YB_test1","B_turnheal1"],
 //["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
-["B_steal1","B_gravetohand1","Y_lich","Y_lich","R_baby_R_6","B_gravetohand1","R_6","R_baby_R_6",],
+//["B_steal1","B_gravetohand1","Y_lich","Y_lich","R_baby_R_6","B_gravetohand1","R_6","R_baby_R_6",],
 //["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 //["B_steal1","Y_poison2","R_basa","Y_meteo","B_01rebirth","B_turnheal1","R_haif","Y_lich","B_decktohand1",],//検証用
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_basa","R_6",],
 //["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
-["B_4","B_4","Y_poison2","Y_poison2","Y_byred","R_mino","R_mino",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_lich","Y_poison1","R_basa","R_basa",],
+//["B_4","B_4","Y_poison2","Y_poison2","Y_byred","R_mino","R_mino",],
+//["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_lich","Y_poison1","R_basa","R_basa",],
 //["YB_Y2B2","RB_R4B2","YB_Y2B2","RB_R4B2","Y_playred4","Y_playblue","R_baby_R_6","R_baby_R_6","R_2",],
 
 ];
@@ -1341,6 +1342,14 @@ case "turn_count_damage": {
   break;
 }
   case "grave_to_hand": {　//墓地から手札へ
+
+   await wait(1500);
+    await showEffectModal(`
+    ${owner.name}が墓地から
+    ${eff.card}を${eff.max}枚選んで手札へ加えます
+    ※${eff.card}が${eff.max}枚以下なら自動で加えます
+    `);
+    
    const target =
     eff.target === "self" ? owner : opponent;
 　　 const filterFn = FILTERS[eff.filter] ?? FILTERS.any; //フィルター何も無いなら全対象にする
