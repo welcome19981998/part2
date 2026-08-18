@@ -720,13 +720,22 @@ const CARD_POOL = {
   source: "生命の樹"
 }],picture:"seimei.jpg"
   },
+  R_basa:{
+    level: 2,name: "バーサーカー", damage: 5, color: "red",
+  effect:[{
+  type: "deck_discard",
+  target: "self",
+  value: 2,
+  source: "バーサーカー"
+}],picture:"basa.jpg"
+  },
 };
 
 const PLAYER_DECKLISTS =[
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 //["R_haif","R_set4","B_set14","R_set4","B_set14","Y_playblue","R_haif","R_baby_R_6","R_2",],
 //["B_4","B_4","Y_poison2","Y_meteo","R_6","R_6",],
-["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
+["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_basa","R_basa","R_4","R_4",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 ];
@@ -736,12 +745,12 @@ const ENEMY_DECKLISTS = [
 //["B_steal1","B_steal1","R_baby_R_6","R_baby_R_6","R_baby_R_6","R_6","R_6",],
 //["B_steal1","B_steal1","Y_lich","Y_lich","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
 //["Y_poison1","Y_playblue","R_6","R_6","R_baby_R_6","R_baby_R_6","B_turnheal1","R_6","B_turnheal1",],
-["B_steal1","Y_poison2","R_baby_R_6","Y_meteo","B_01rebirth","B_turnheal1","R_haif","Y_lich","B_decktohand1",],//検証用
+["B_steal1","Y_poison2","R_basa","Y_meteo","B_01rebirth","B_turnheal1","R_haif","Y_lich","B_decktohand1",],//検証用
 //["B_2","B_4","B_02discard2","Y_2","Y_4","Y_lich","R_2","R_4","R_6",],
 //["B_02discard2","B_02discard2","Y_lich","Y_lich","R_6","R_6",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_2","Y_2","Y_poison1","Y_poison1","R_2","R_2","R_4","R_4",],
 //["B_2","B_2","B_02discard1","B_02discard1","Y_lich","Y_lich","Y_poison1","R_2","R_2","R_baby_R_6","R_baby_R_6",],
-["B_4","B_4","Y_poison2","Y_poison2","B_01rebirth","R_6",],
+["B_4","B_4","Y_poison2","Y_poison2","B_01rebirth","R_basa","R_basa",],
 //["YB_Y2B2","RB_R4B2","YB_Y2B2","RB_R4B2","Y_playred4","Y_playblue","R_baby_R_6","R_baby_R_6","R_2",],
 
 ];
@@ -1276,6 +1285,30 @@ case "turn_count_damage": {
       delta: delta
     });
   }
+
+  break;
+ }
+ //デッキから墓地へ
+ case "deck_discard": {
+  const target =
+    eff.target === "self" ? owner : opponent;
+
+  const count = Math.min(eff.value, target.deck.length);
+  if (count === 0) break;//デッキ0枚なら何もしない
+
+  await wait(1500);
+
+  await showEffectModal(`
+    ${target.name}は
+    ${eff.source}により
+    デッキから${count}枚を墓地へ送ります
+  `);
+
+  const cards = target.deck.splice(-count);
+
+  target.grave.push(...cards);
+
+  updateZoneCount();
 
   break;
 }
