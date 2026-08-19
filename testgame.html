@@ -1365,16 +1365,17 @@ case "turn_count_damage": {
   if (targets.length === 0) break;
 
   for (const card of targets) {
-    const index = target.grave.indexOf(card);
+    const index = target.grave.indexOf(targetCard);
     if (index === -1) continue;
 
     target.grave.splice(index, 1);
-    target.hand.push(card);
+    target.hand.push(targetCard);
+
+    await showEffectModal(`
+     ${target.name}は
+    「${card.targetCard}」を手札に加えました
+   `);
   }
-  await showEffectModal(`
-  ${target.name}は
-  「${card.name}」を手札に加えました
-`);
 
   redrawHands();
   updateZoneCount();
