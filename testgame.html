@@ -1371,6 +1371,10 @@ case "turn_count_damage": {
     target.grave.splice(index, 1);
     target.hand.push(card);
   }
+  await showEffectModal(`
+  ${target.name}は
+  「${card.name}」を手札に加えました
+`);
 
   redrawHands();
   updateZoneCount();
